@@ -1,8 +1,8 @@
 ﻿using System.Linq.Expressions;
 
-namespace GymManagementSystem.DataAccess.Abstract;
+namespace GymManagementSystem.Business.Abstract;
 
-public interface IGenericRepository<T> where T : class
+public interface IGenericService<T>
 {
     void Insert(T entity);
     void Delete(T entity);
