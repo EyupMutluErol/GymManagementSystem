@@ -1,5 +1,6 @@
 ﻿using GymManagementSystem.Entities.Abstract;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GymManagementSystem.Entities.Concrete;
 
@@ -21,6 +22,7 @@ public class Service:IEntity
     [Required(ErrorMessage = "Ücret bilgisi zorunludur.")]
     [DataType(DataType.Currency)]
     [Range(0, 10000, ErrorMessage = "Ücret 0 ile 10.000 TL arasında olmalıdır.")]
+    [Column(TypeName = "decimal(18,2)")]
     public decimal Price { get; set; }
 
     // Bir hizmet mutlaka bir salona ait olmalıdır.

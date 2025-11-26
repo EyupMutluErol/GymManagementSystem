@@ -1,7 +1,27 @@
+using GymManagementSystem.DataAccess.Context;
+using GymManagementSystem.Entities.Concrete;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<GymContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+builder.Services.AddIdentity<AppUser,IdentityRole<int>>()
+    .AddEntityFrameworkStores<GymContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login"; // Giriþ yapmamýþ kullanýcýyý buraya yönlendir
+    options.AccessDeniedPath = "/Account/AccessDenied"; // Yetkisi yetmeyen kullanýcýyý buraya yönlendir
+});
 
 var app = builder.Build();
 
@@ -16,6 +36,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

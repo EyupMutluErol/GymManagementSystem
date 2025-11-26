@@ -53,4 +53,5 @@ public class AppUser:IdentityUser<int>,IEntity
     [Range(100, 250, ErrorMessage = "Geçerli bir boy giriniz (100-250).")] // Mantıksız değerleri engeller
     public double? Height { get; set; }
 
+    public List<TrainerService> TrainerServices { get; set; }
 }
