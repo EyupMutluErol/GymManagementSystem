@@ -4,6 +4,7 @@ using GymManagementSystem.DataAccess.Abstract;
 using GymManagementSystem.DataAccess.Concrete.EntityFramework;
 using GymManagementSystem.DataAccess.Context;
 using GymManagementSystem.Entities.Concrete;
+using GymManagementSystem.WebUI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,9 +19,17 @@ builder.Services.AddDbContext<GymContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddIdentity<AppUser,IdentityRole<int>>()
-    .AddEntityFrameworkStores<GymContext>()
-    .AddDefaultTokenProviders();
+builder.Services.AddIdentity<AppUser, IdentityRole<int>>(options =>
+{
+    options.Password.RequireDigit = false;          
+    options.Password.RequireLowercase = false;    
+    options.Password.RequireUppercase = false;      
+    options.Password.RequireNonAlphanumeric = false; 
+    options.Password.RequiredLength = 3;
+})
+.AddEntityFrameworkStores<GymContext>()
+.AddDefaultTokenProviders()
+.AddErrorDescriber<CustomIdentityErrorDescriber>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

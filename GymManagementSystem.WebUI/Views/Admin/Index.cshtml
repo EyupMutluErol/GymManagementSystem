@@ -1,0 +1,77 @@
+﻿@model GymManagementSystem.WebUI.Models.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Yönetim Paneli";
+    Layout = "_Layout";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="text-primary border-bottom pb-2">
+                <i class="fa-solid fa-gauge-high"></i> Yönetim Paneli
+            </h2>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3 shadow">
+                <div class="card-header">Toplam Üye</div>
+                <div class="card-body">
+                    <h5 class="card-title display-4 text-center">
+                        <i class="fa-solid fa-users"></i> @Model.TotalMemberCount
+                    </h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3 shadow">
+                <div class="card-header">Aktif Eğitmen</div>
+                <div class="card-body">
+                    <h5 class="card-title display-4 text-center">
+                        <i class="fa-solid fa-chalkboard-user"></i> @Model.ActiveTrainerCount
+                    </h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3 shadow">
+                <div class="card-header">Bekleyen Randevu</div>
+                <div class="card-body">
+                    <h5 class="card-title display-4 text-center">
+                        <i class="fa-solid fa-clock"></i> @Model.PendingAppointmentCount
+                    </h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3 shadow">
+                <div class="card-header">Spor Salonu</div>
+                <div class="card-body">
+                    <h5 class="card-title display-4 text-center">
+                        <i class="fa-solid fa-building"></i> @Model.TotalGymCount
+                    </h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 mt-4">
+            <h4>Hızlı İşlemler</h4>
+            <div class="d-flex gap-3">
+                <a href="#" class="btn btn-outline-primary btn-lg">
+                    <i class="fa-solid fa-plus"></i> Yeni Salon Ekle
+                </a>
+                <a href="#" class="btn btn-outline-success btn-lg">
+                    <i class="fa-solid fa-user-plus"></i> Eğitmen Ata
+                </a>
+                <a asp-action="UserList" class="btn btn-outline-info btn-lg">
+                    <i class="fa-solid fa-list"></i> Üyeleri Listele
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
