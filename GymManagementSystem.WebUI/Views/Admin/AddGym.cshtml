@@ -1,0 +1,53 @@
+﻿@model GymManagementSystem.WebUI.Models.ViewModels.GymViewModel
+
+@{
+    ViewData["Title"] = "Yeni Salon Ekle";
+    Layout = "_Layout";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fa-solid fa-plus-circle"></i> Yeni Spor Salonu Ekle</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AddGym" method="post">
+
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-bold"></label>
+                            <input asp-for="Name" class="form-control" placeholder="Örn: Merkez Şube" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Address" class="form-label fw-bold"></label>
+                            <textarea asp-for="Address" class="form-control" rows="3" placeholder="Açık adres giriniz..."></textarea>
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="OpenTime" class="form-label fw-bold"></label>
+                                <input asp-for="OpenTime" class="form-control" type="time" />
+                                <span asp-validation-for="OpenTime" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="CloseTime" class="form-label fw-bold"></label>
+                                <input asp-for="CloseTime" class="form-control" type="time" />
+                                <span asp-validation-for="CloseTime" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                            <a asp-action="GymList" class="btn btn-secondary me-md-2">İptal</a>
+                            <button type="submit" class="btn btn-success px-4">Kaydet</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

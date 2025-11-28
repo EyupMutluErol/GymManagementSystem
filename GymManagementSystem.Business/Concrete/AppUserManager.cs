@@ -47,4 +47,32 @@ public class AppUserManager:GenericManager<AppUser>,IAppUserService
         }
         return dtoList;
     }
+
+    public async Task ChangeUserRoleAsync(int userId, string newRole)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user != null)
+        {
+            // 1. Mevcut tüm rolleri al
+            var currentRoles = await _userManager.GetRolesAsync(user);
+
+            // 2. Mevcut rolleri sil (Temizlik)
+            if (currentRoles.Count > 0)
+            {
+                await _userManager.RemoveFromRolesAsync(user, currentRoles);
+            }
+
+            // 3. Yeni rolü ekle
+            await _userManager.AddToRoleAsync(user, newRole);
+        }
+    }
+
+    public async Task DeleteUserAsync(int userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user != null)
+        {
+            await _userManager.DeleteAsync(user);
+        }
+    }
 }

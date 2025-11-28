@@ -1,16 +1,21 @@
 ﻿@model List<GymManagementSystem.WebUI.Models.ViewModels.UserListViewModel>
 
 @{
-    ViewData["Title"] = "Üye Listesi";
+    ViewData["Title"] = "Eğitmen Listesi";
     Layout = "_Layout";
 }
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="text-primary"><i class="fa-solid fa-users"></i> Normal Üye Listesi</h2>
-        <a asp-action="Index" class="btn btn-secondary">
-            <i class="fa-solid fa-arrow-left"></i> Geri Dön
-        </a>
+        <h2 class="text-success"><i class="fa-solid fa-chalkboard-user"></i> Eğitmen Listesi</h2>
+        <div>
+            <a asp-action="AddTrainer" class="btn btn-success me-2">
+                <i class="fa-solid fa-plus"></i> Yeni Ata
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fa-solid fa-arrow-left"></i> Geri Dön
+            </a>
+        </div>
     </div>
 
     <div class="card shadow-sm">
@@ -30,14 +35,14 @@
                         <tr>
                             <td>@item.FirstName @item.LastName</td>
                             <td>@item.Email</td>
-                            <td><span class="badge bg-secondary">Üye</span></td>
+                            <td><span class="badge bg-success">Eğitmen</span></td>
                             <td class="text-end">
-                                <!-- Üyeyi Antrenör Yap Butonu -->
+                                <!-- Eğitmeni Üye Yap (Yetkisini Al) Butonu -->
                                 <form asp-action="ChangeRole" method="post" style="display:inline;">
                                     <input type="hidden" name="id" value="@item.Id" />
-                                    <input type="hidden" name="role" value="Trainer" />
-                                    <button type="submit" class="btn btn-sm btn-outline-success" onclick="return confirm('Bu üyeyi Eğitmen yapmak istediğinize emin misiniz?');">
-                                        <i class="fa-solid fa-chalkboard-user"></i> Eğitmen Yap
+                                    <input type="hidden" name="role" value="Member" />
+                                    <button type="submit" class="btn btn-sm btn-outline-warning" onclick="return confirm('Bu kişinin eğitmen yetkisini alıp Normal Üye yapmak istediğinize emin misiniz?');">
+                                        <i class="fa-solid fa-user-minus"></i> Yetkiyi Al
                                     </button>
                                 </form>
 
@@ -51,7 +56,7 @@
             </table>
             @if (Model.Count == 0)
             {
-                <div class="alert alert-warning m-3 text-center">Kayıtlı normal üye bulunmamaktadır.</div>
+                <div class="alert alert-warning m-3 text-center">Kayıtlı eğitmen bulunmamaktadır.</div>
             }
         </div>
     </div>

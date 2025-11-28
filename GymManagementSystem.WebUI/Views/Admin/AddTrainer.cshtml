@@ -1,0 +1,59 @@
+﻿<!-- Views/Admin/AddTrainer.cshtml -->
+@model List<GymManagementSystem.WebUI.Models.ViewModels.UserListViewModel>
+
+@{
+    ViewData["Title"] = "Eğitmen Ata";
+    Layout = "_Layout";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-success"><i class="fa-solid fa-user-plus"></i> Yeni Eğitmen Ata</h2>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Geri Dön
+        </a>
+    </div>
+
+    <div class="alert alert-info">
+        <i class="fa-solid fa-info-circle"></i> Aşağıdaki listede sadece <strong>Normal Üye</strong> rolündeki kullanıcılar görüntülenmektedir. Antrenör yapmak istediğiniz kişinin yanındaki butona tıklayınız.
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="bg-light">
+                    <tr>
+                        <th>Ad Soyad</th>
+                        <th>E-Posta</th>
+                        <th class="text-end">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.FirstName @item.LastName</td>
+                            <td>@item.Email</td>
+                            <td class="text-end">
+                                <form asp-action="MakeTrainer" method="post" style="display:inline;">
+                                    <input type="hidden" name="userId" value="@item.Id" />
+                                    <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('@item.FirstName isimli üyeyi Eğitmen yapmak istediğinize emin misiniz?');">
+                                        <i class="fa-solid fa-check"></i> Eğitmen Yap
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            @if (Model.Count == 0)
+            {
+                <div class="text-center p-4 text-muted">
+                    <i class="fa-solid fa-users-slash fa-2x mb-2"></i>
+                    <p>Şu anda antrenör yapılabilecek kayıtlı normal üye bulunmamaktadır.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

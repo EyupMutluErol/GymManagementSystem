@@ -9,11 +9,13 @@ namespace GymManagementSystem.WebUI.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly RoleManager<IdentityRole<int>> _roleManager;
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, RoleManager<IdentityRole<int>> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
         public async Task<IActionResult> CreateRoles()
@@ -61,7 +63,7 @@ namespace GymManagementSystem.WebUI.Controllers
                 {
                     // Şimdilik varsayılan olarak "Member" rolü atayalım (İleride RoleManager ile yapacağız)
                     // await _userManager.AddToRoleAsync(user, "Member");
-
+                    await _userManager.AddToRoleAsync(user, "Member");
                     return RedirectToAction("Login");
                 }
                 else
@@ -112,7 +114,7 @@ namespace GymManagementSystem.WebUI.Controllers
                     }
                     else if (await _userManager.IsInRoleAsync(user, "Trainer"))
                     {
-                        return RedirectToAction("Index", "Trainer"); // (Henüz yok ama yapacağız)
+                        return RedirectToAction("Index", "Trainer"); 
                     }
                     else
                     {

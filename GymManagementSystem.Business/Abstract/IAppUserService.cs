@@ -8,4 +8,6 @@ public interface IAppUserService : IGenericService<AppUser>
 {
     Task<List<AppUser>> GetUsersByRoleAsync(string roleName);
     Task<List<UserListDto>> GetUserListWithRolesAsync();
+    Task ChangeUserRoleAsync(int userId, string newRole);
+    Task DeleteUserAsync(int userId);
 }

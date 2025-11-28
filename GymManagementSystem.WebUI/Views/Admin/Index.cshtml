@@ -59,19 +59,59 @@
             </div>
         </div>
 
-        <div class="col-md-12 mt-4">
-            <h4>Hızlı İşlemler</h4>
-            <div class="d-flex gap-3">
-                <a href="#" class="btn btn-outline-primary btn-lg">
-                    <i class="fa-solid fa-plus"></i> Yeni Salon Ekle
-                </a>
-                <a href="#" class="btn btn-outline-success btn-lg">
-                    <i class="fa-solid fa-user-plus"></i> Eğitmen Ata
-                </a>
-                <a asp-action="UserList" class="btn btn-outline-info btn-lg">
-                    <i class="fa-solid fa-list"></i> Üyeleri Listele
-                </a>
+        <div class="row mt-5">
+
+            <!-- SOL TARA: EKLEME İŞLEMLERİ -->
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100 border-0">
+                    <div class="card-header bg-white border-bottom-0">
+                        <h5 class="text-success mb-0"><i class="fa-solid fa-plus-circle"></i> Ekleme İşlemleri</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <!-- Salon Ekle -->
+                            <a asp-controller="Admin" asp-action="AddGym" class="btn btn-outline-success btn-lg text-start">
+                                <i class="fa-solid fa-dumbbell me-2"></i> Yeni Salon Ekle
+                            </a>
+                            <a asp-controller="Admin" asp-action="AddTrainer" class="btn btn-outline-success btn-lg text-start mt-2">
+                                <i class="fa-solid fa-user-plus me-2"></i> Yeni Eğitmen Ata
+                            </a>
+                            <!-- İleride buraya 'Yeni Hizmet Ekle' vb. gelebilir -->
+                            <!-- Şimdilik Eğitmen atama işlemini de buraya koyabiliriz veya UserList'e yönlendirebiliriz -->
+                            <a href="#" class="btn btn-outline-success btn-lg text-start disabled">
+                                <i class="fa-solid fa-user-plus me-2"></i> Yeni Hizmet Ekle (Yakında)
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+            <!-- SAĞ TARAF: LİSTELEME İŞLEMLERİ -->
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100 border-0">
+                    <div class="card-header bg-white border-bottom-0">
+                        <h5 class="text-primary mb-0"><i class="fa-solid fa-list"></i> Listeleme İşlemleri</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <!-- Salon Listesi -->
+                            <a asp-controller="Admin" asp-action="GymList" class="btn btn-outline-primary btn-lg text-start">
+                                <i class="fa-solid fa-building me-2"></i> Salonları Listele
+                            </a>
+
+                            <!-- Üye Listesi -->
+                            <a asp-controller="Admin" asp-action="UserList" class="btn btn-outline-primary btn-lg text-start">
+                                <i class="fa-solid fa-users me-2"></i> Üyeleri Listele
+                            </a>
+                            <a asp-controller="Admin" asp-action="TrainerList" class="btn btn-outline-success btn-lg text-start">
+                                <i class="fa-solid fa-chalkboard-user me-2"></i> Eğitmenleri Listele
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
+    </div>
     </div>
 </div>
