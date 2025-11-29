@@ -78,6 +78,12 @@ public class AppUserManager:GenericManager<AppUser>,IAppUserService
 
                 // Kullanıcıyı güncelle
                 await _userManager.UpdateAsync(user);
+
+                var services = _trainerServiceRepository.GetListByFilter(x => x.AppUserId == user.Id);
+                foreach (var item in services)
+                {
+                    _trainerServiceRepository.Delete(item);
+                }
             }
         }
     }
@@ -106,6 +112,8 @@ public class AppUserManager:GenericManager<AppUser>,IAppUserService
             LastName = user.LastName,
             Email = user.Email,
             GymId = user.GymId,
+            ShiftStart = user.ShiftStart,
+            ShiftEnd = user.ShiftEnd,
             ServiceList = new List<ServiceCheckBoxDto>()
         };
 
@@ -139,6 +147,8 @@ public class AppUserManager:GenericManager<AppUser>,IAppUserService
         {
             // 1. Salon Ataması
             user.GymId = trainerDto.GymId;
+            user.ShiftStart = trainerDto.ShiftStart; 
+            user.ShiftEnd = trainerDto.ShiftEnd;
             await _userManager.UpdateAsync(user);
 
             // 2. Uzmanlık (Hizmet) Güncellemesi

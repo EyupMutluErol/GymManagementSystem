@@ -1,0 +1,62 @@
+﻿@model List<GymManagementSystem.WebUI.Models.ViewModels.AppointmentListViewModel>
+
+@{
+    ViewData["Title"] = "Eğitmen Paneli";
+    Layout = "_Layout";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-info"><i class="fa-solid fa-chalkboard-user"></i> Eğitmen Paneli</h2>
+        <span class="badge bg-secondary">@DateTime.Now.ToString("dd MMMM yyyy")</span>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fa-solid fa-list"></i> Ders Programım</h5>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Tarih / Saat</th>
+                                <th>Öğrenci</th>
+                                <th>Ders</th>
+                                <th>Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                // Sadece bugünü ve geleceği vurgulayalım
+                                string rowClass = item.Date.Date == DateTime.Today ? "table-warning" : "";
+
+                                <tr class="@rowClass">
+                                    <td>
+                                        <strong>@item.Date.ToString("dd.MM.yyyy")</strong>
+                                        <br />
+                                        <small>@item.StartTime - @item.EndTime</small>
+                                    </td>
+                                    <td>@item.TrainerName</td> <!-- Modelde TrainerName alanına Öğrenci adını koymuştuk -->
+                                    <td>@item.ServiceName</td>
+                                    <td>
+                                        <span class="badge bg-@item.StatusColor">@item.Status</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    @if (Model.Count == 0)
+                    {
+                        <div class="alert alert-info m-3 text-center">
+                            Henüz planlanmış bir dersiniz bulunmamaktadır.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

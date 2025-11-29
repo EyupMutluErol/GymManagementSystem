@@ -1,0 +1,145 @@
+﻿@model GymManagementSystem.WebUI.Models.ViewModels.MakeAppointmentViewModel
+
+@{
+    ViewData["Title"] = "Randevu Al";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h3 class="mb-0"><i class="fa-solid fa-calendar-check"></i> Yeni Randevu Oluştur</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+
+                        <div class="mb-3">
+                            <label asp-for="GymId" class="form-label fw-bold">1. Hangi Salona Gideceksiniz?</label>
+                            <select asp-for="GymId" class="form-select form-select-lg" asp-items="ViewBag.Gyms" id="gymDropdown">
+                                <option value="">-- Salon Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="GymId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ServiceId" class="form-label fw-bold">2. Hangi Hizmeti Alacaksınız?</label>
+                            <select asp-for="ServiceId" class="form-select form-select-lg" id="serviceDropdown" disabled>
+                                <option value="">-- Önce Salon Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="ServiceId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="TrainerId" class="form-label fw-bold">3. Eğitmen Tercihiniz</label>
+                            <select asp-for="TrainerId" class="form-select form-select-lg" id="trainerDropdown" disabled>
+                                <option value="">-- Önce Hizmet Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="TrainerId" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Date" class="form-label fw-bold">4. Tarih Seçiniz</label>
+                                <input asp-for="Date" type="date" class="form-control form-control-lg" id="appointmentDate" />
+                                <span asp-validation-for="Date" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label fw-bold">5. Uygun Saatler</label>
+                                <div id="timeSlotsContainer" class="d-flex flex-wrap gap-2 p-3 border rounded bg-light">
+                                    <span class="text-muted fst-italic">Lütfen önce antrenör ve tarih seçiniz.</span>
+                                </div>
+                                <span asp-validation-for="TimeSlot" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-success btn-lg disabled" id="btnSubmit">
+                                Devam Et <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            // 1. Salon Değişince -> Hizmetleri Getir
+            $('#gymDropdown').change(function () {
+                var gymId = $(this).val();
+                var serviceDropdown = $('#serviceDropdown');
+
+                serviceDropdown.empty().append('<option value="">-- Hizmet Seçiniz --</option>').prop('disabled', true);
+                $('#trainerDropdown').empty().append('<option value="">-- Önce Hizmet Seçiniz --</option>').prop('disabled', true);
+                $('#timeSlotsContainer').empty(); // Saatleri temizle
+
+                if (gymId) {
+                    $.getJSON('/Appointment/GetServicesByGym', { gymId: gymId }, function (data) {
+                        $.each(data, function (i, item) {
+                            serviceDropdown.append($('<option>').val(item.id).text(item.name));
+                        });
+                        serviceDropdown.prop('disabled', false);
+                    });
+                }
+            });
+
+            // 2. Hizmet Değişince -> Antrenörleri Getir
+            $('#serviceDropdown').change(function () {
+                var serviceId = $(this).val();
+                var trainerDropdown = $('#trainerDropdown');
+
+                trainerDropdown.empty().append('<option value="">-- Antrenör Seçiniz --</option>').prop('disabled', true);
+
+                if (serviceId) {
+                    $.getJSON('/Appointment/GetTrainersByService', { serviceId: serviceId }, function (data) {
+                        $.each(data, function (i, item) {
+                            trainerDropdown.append($('<option>').val(item.id).text(item.fullName));
+                        });
+                        trainerDropdown.prop('disabled', false);
+                    });
+                }
+            });
+
+            // 3. Tarih veya Antrenör Değişince -> Saatleri Getir
+            $('#appointmentDate, #trainerDropdown').change(function () {
+                var trainerId = $('#trainerDropdown').val();
+                var serviceId = $('#serviceDropdown').val();
+                var date = $('#appointmentDate').val(); // input type="date" id="appointmentDate" olmalı
+                var container = $('#timeSlotsContainer'); // Saatlerin listeleneceği div
+
+                if (trainerId && serviceId && date) {
+                    container.html('<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div>');
+
+                    $.getJSON('/Appointment/GetAvailableHours', { trainerId: trainerId, serviceId: serviceId, date: date }, function (data) {
+                        container.empty();
+                        if (data.length === 0) {
+                            container.html('<div class="alert alert-warning">Bu tarihte uygun saat bulunamadı.</div>');
+                        } else {
+                            $.each(data, function (i, time) {
+                                // Saatleri Radyo Butonu veya Buton olarak listele
+                                var btn = `
+                                    <input type="radio" class="btn-check" name="TimeSlot" id="slot_${i}" value="${time}" required>
+                                    <label class="btn btn-outline-success m-1" for="slot_${i}">${time}</label>
+                                `;
+                                container.append(btn);
+                            });
+                            // Butonlara basılınca submit butonunu aç
+                            $('input[name="TimeSlot"]').change(function() {
+                                $('#btnSubmit').removeClass('disabled');
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

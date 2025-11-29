@@ -1,0 +1,74 @@
+﻿@model List<GymManagementSystem.WebUI.Models.ViewModels.AppointmentListViewModel>
+
+@{
+    ViewData["Title"] = "Randevularım";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary"><i class="fa-solid fa-calendar-days"></i> Randevularım</h2>
+        <a asp-action="Create" class="btn btn-success">
+            <i class="fa-solid fa-plus"></i> Yeni Randevu Al
+        </a>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="alert alert-info text-center py-5">
+            <h4>Henüz hiç randevunuz yok.</h4>
+            <p>Hemen spor hayatına başlamak için yukarıdaki butona tıklayın!</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow-sm border-left-@item.StatusColor h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="card-title fw-bold text-dark">@item.ServiceName</h5>
+                                    <p class="text-muted mb-1"><i class="fa-solid fa-building"></i> @item.GymName</p>
+                                    <p class="text-muted mb-1"><i class="fa-solid fa-user-tie"></i> @item.TrainerName</p>
+                                </div>
+                                <span class="badge bg-@item.StatusColor p-2">@item.Status</span>
+                            </div>
+
+                            <hr />
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fa-solid fa-calendar-alt text-primary"></i>
+                                    <strong>@item.Date.ToString("dd.MM.yyyy")</strong>
+                                    <span class="mx-2">|</span>
+                                    <i class="fa-solid fa-clock text-primary"></i>
+                                    <strong>@item.StartTime - @item.EndTime</strong>
+                                </div>
+
+                                @if (item.Status == "Onay Bekliyor")
+                                {
+                                    <a asp-action="Cancel" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-danger"
+                                       onclick="return confirm('Bu randevuyu iptal etmek istediğinize emin misiniz?');">
+                                        <i class="fa-solid fa-xmark"></i> İptal
+                                    </a>
+                                }
+                                else if (item.Status == "Onaylandı")
+                                {
+                                    <span class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" title="Onaylanmış randevuları iptal etmek için lütfen salonla iletişime geçiniz.">
+                                        <button class="btn btn-sm btn-outline-secondary" disabled>
+                                            <i class="fa-solid fa-lock"></i> İptal Edilemez
+                                        </button>
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

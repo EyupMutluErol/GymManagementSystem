@@ -12,6 +12,8 @@ public class TrainerDetailDto
     public string Email { get; set; }
 
     public int? GymId { get; set; }
+    public TimeSpan? ShiftStart { get; set; }
+    public TimeSpan? ShiftEnd { get; set; }
 
     public List<ServiceCheckBoxDto> ServiceList { get; set; }
 }

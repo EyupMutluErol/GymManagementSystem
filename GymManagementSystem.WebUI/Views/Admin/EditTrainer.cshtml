@@ -17,40 +17,47 @@
                 <input type="hidden" asp-for="LastName" />
                 <input type="hidden" asp-for="Email" />
 
-                <!-- 1. SALON SEÇİMİ -->
                 <div class="mb-4">
                     <label class="form-label fw-bold">Çalıştığı Salon</label>
-                    <select asp-for="GymId" class="form-select" asp-items="ViewBag.Gyms">
+                    <select asp-for="GymId" class="form-select" asp-items="ViewBag.Gyms" id="gymDropdown">
                         <option value="">-- Bir Salon Atayın --</option>
                     </select>
-                    <div class="form-text text-muted">Hocanın verebileceği dersleri görmek için önce bir salon seçip <strong>Kaydet</strong> butonuna basınız.</div>
                 </div>
 
-                <!-- 2. HİZMET (UZMANLIK) SEÇİMİ -->
-                @if (Model.GymId != null && Model.ServiceList.Count > 0)
-                {
-                    <h5 class="border-bottom pb-2 mb-3">Verebileceği Hizmetler</h5>
-                    <div class="row">
-                        @for (int i = 0; i < Model.ServiceList.Count; i++)
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Mesai Başlangıç</label>
+                        <input asp-for="ShiftStart" type="time" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Mesai Bitiş</label>
+                        <input asp-for="ShiftEnd" type="time" class="form-control" />
+                    </div>
+                </div>
+
+                <h5 class="border-bottom pb-2 mb-3">Verebileceği Hizmetler</h5>
+
+                <div class="row" id="servicesContainer">
+
+                    @if (Model.ServiceList != null)
+                    {
+                        foreach (var item in Model.ServiceList)
                         {
                             <div class="col-md-4 mb-2">
                                 <div class="form-check">
-                                    <input type="hidden" asp-for="@Model.ServiceList[i].ServiceId" />
-                                    <input type="hidden" asp-for="@Model.ServiceList[i].ServiceName" />
-
-                                    <input class="form-check-input" type="checkbox" asp-for="@Model.ServiceList[i].IsSelected" />
+                                    <input class="form-check-input" type="checkbox" name="selectedServices" value="@item.ServiceId" @(item.IsSelected ? "checked" : "") />
                                     <label class="form-check-label">
-                                        @Model.ServiceList[i].ServiceName
+                                        @item.ServiceName
                                     </label>
                                 </div>
                             </div>
                         }
-                    </div>
-                }
-                else if (Model.GymId != null)
-                {
-                    <div class="alert alert-warning">Bu salonda henüz tanımlı bir hizmet yok.</div>
-                }
+                    }
+                </div>
+
+                <div id="loadingMessage" class="text-muted mt-2" style="display:none;">
+                    <i class="fa-solid fa-spinner fa-spin"></i> Hizmetler yükleniyor...
+                </div>
 
                 <div class="d-flex justify-content-end mt-4">
                     <a asp-action="TrainerList" class="btn btn-secondary me-2">İptal</a>
@@ -60,3 +67,52 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Dropdown değiştiğinde çalışacak fonksiyon
+            $('#gymDropdown').change(function () {
+                var gymId = $(this).val(); // Seçilen Salon ID'sini al
+                var container = $('#servicesContainer');
+                var loading = $('#loadingMessage');
+
+                container.empty(); // Önceki checkboxları temizle
+
+                if (gymId) {
+                    loading.show(); // Yükleniyor yazısını göster
+
+                    // AJAX İsteği Atıyoruz
+                    $.ajax({
+                        url: '/Admin/GetServicesByGym', // Controller'daki metodumuz
+                        type: 'GET',
+                        data: { gymId: gymId },
+                        success: function (data) {
+                            loading.hide();
+
+                            if (data.length === 0) {
+                                container.append('<div class="alert alert-warning col-12">Bu salonda tanımlı hizmet bulunamadı.</div>');
+                            } else {
+                                // Gelen her hizmet için bir checkbox oluştur
+                                $.each(data, function (index, item) {
+                                    var checkboxHtml = `
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="selectedServices" value="${item.id}" />
+                                                <label class="form-check-label">${item.name}</label>
+                                            </div>
+                                        </div>`;
+                                    container.append(checkboxHtml);
+                                });
+                            }
+                        },
+                        error: function () {
+                            loading.hide();
+                            alert('Hizmetler yüklenirken bir hata oluştu.');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

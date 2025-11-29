@@ -157,14 +157,36 @@ namespace GymManagementSystem.WebUI.Controllers
             return View(dto);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> EditTrainer(TrainerDetailDto model)
+        [HttpGet]
+        public IActionResult GetServicesByGym(int gymId)
         {
+            // Salona ait hizmetleri çek
+            var services = _serviceService.GetListByFilter(x => x.GymId == gymId);
+
+            // Sadece ID ve İsimlerini JSON olarak döndür
+            // (Tüm veriyi göndermeye gerek yok, hafif olsun)
+            var jsonResult = services.Select(s => new { s.Id, s.Name }).ToList();
+
+            return Json(jsonResult);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditTrainer(TrainerDetailDto model, int[] selectedServices)
+        {
+            model.ServiceList = new List<ServiceCheckBoxDto>();
+
+            foreach (var serviceId in selectedServices)
+            {
+                model.ServiceList.Add(new ServiceCheckBoxDto
+                {
+                    ServiceId = serviceId,
+                    IsSelected = true
+                });
+            }
+
             // Güncelleme isteğini servise gönder
             await _appUserService.UpdateTrainerDetailsAsync(model);
 
-            // Eğer salon değiştiyse hizmet listesi sıfırlanır, sayfayı yenilemek en iyisidir
-            // Veya listeye dön
             return RedirectToAction("TrainerList");
         }
 
@@ -422,6 +444,61 @@ namespace GymManagementSystem.WebUI.Controllers
             }
 
             return RedirectToAction("ServiceList");
+        }
+
+        [HttpGet]
+        public IActionResult AppointmentList()
+        {
+            var appointments = _appointmentService.GetAllAppointmentsWithDetails();
+            var modelList = new List<AppointmentListViewModel>();
+
+            foreach (var item in appointments)
+            {
+                string color = "secondary";
+                string statusText = "";
+
+                if (item.Status == AppointmentStatus.Pending) { color = "warning"; statusText = "Onay Bekliyor"; }
+                else if (item.Status == AppointmentStatus.Confirmed) { color = "success"; statusText = "Onaylandı"; }
+                else if (item.Status == AppointmentStatus.Cancelled) { color = "danger"; statusText = "Reddedildi / İptal"; }
+
+                modelList.Add(new AppointmentListViewModel
+                {
+                    Id = item.Id,
+                    GymName = item.Service.Gym.Name,
+                    ServiceName = item.Service.Name,
+                    TrainerName = item.Trainer.FirstName + " " + item.Trainer.LastName,
+                    MemberName = item.Member.FirstName + " " + item.Member.LastName,
+                    Date = item.Date,
+                    StartTime = item.StartTime.ToString(@"hh\:mm"),
+                    EndTime = item.EndTime.ToString(@"hh\:mm"),
+                    Status = statusText,
+                    StatusColor = color
+                });
+            }
+
+            return View(modelList);
+        }
+
+        public IActionResult ApproveAppointment(int id)
+        {
+            var appointment = _appointmentService.GetById(id);
+            if (appointment != null)
+            {
+                appointment.Status = AppointmentStatus.Confirmed;
+                _appointmentService.Update(appointment);
+            }
+            return RedirectToAction("AppointmentList");
+        }
+
+        public IActionResult RejectAppointment(int id)
+        {
+            var appointment = _appointmentService.GetById(id);
+            if (appointment != null)
+            {
+                appointment.Status = AppointmentStatus.Cancelled;
+                _appointmentService.Update(appointment);
+            }
+            return RedirectToAction("AppointmentList");
         }
 
         // EKSTRA METHODLAR
