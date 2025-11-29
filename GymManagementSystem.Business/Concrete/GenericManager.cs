@@ -20,13 +20,9 @@ public class GenericManager<T> :IGenericService<T> where T : class
 
     public T GetById(int id)
     {
-        return _repository.GetByID(id);
+        return _repository.GetById(id);
     }
 
-    public T GetByID(int id)
-    {
-        throw new NotImplementedException();
-    }
 
     public List<T> GetList()
     {

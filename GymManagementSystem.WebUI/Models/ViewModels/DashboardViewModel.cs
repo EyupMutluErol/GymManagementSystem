@@ -6,4 +6,5 @@ public class DashboardViewModel
     public int ActiveTrainerCount { get; set; }
     public int PendingAppointmentCount { get; set; }
     public int TotalGymCount { get; set; }
+    public int TotalServiceCount { get; set; }
 }

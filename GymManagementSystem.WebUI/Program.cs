@@ -12,7 +12,18 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.ModelBindingMessageProvider.SetValueIsInvalidAccessor((x) => $"Girilen deðer geçersizdir.");
+    options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((x, y) => $"'{x}' deðeri {y} alaný için geçersizdir.");
+    options.ModelBindingMessageProvider.SetMissingBindRequiredValueAccessor((x) => $"Bu alanýn doldurulmasý zorunludur.");
+    options.ModelBindingMessageProvider.SetMissingKeyOrValueAccessor(() => $"Bu alanýn doldurulmasý zorunludur.");
+    options.ModelBindingMessageProvider.SetUnknownValueIsInvalidAccessor((x) => $"Girilen deðer geçersizdir.");
+    options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor((x) => $"Bu alanýn doldurulmasý zorunludur.");
+    options.ModelBindingMessageProvider.SetNonPropertyAttemptedValueIsInvalidAccessor((x) => $"'{x}' deðeri geçersizdir.");
+    options.ModelBindingMessageProvider.SetNonPropertyUnknownValueIsInvalidAccessor(() => $"Girilen deðer geçersizdir.");
+    options.ModelBindingMessageProvider.SetValueMustBeANumberAccessor((x) => $"Lütfen '{x}' alanýna geçerli bir sayý giriniz.");
+});
 
 builder.Services.AddDbContext<GymContext>(options =>
 {

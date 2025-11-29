@@ -1,16 +1,16 @@
-﻿@model List<GymManagementSystem.WebUI.Models.ViewModels.GymViewModel>
+﻿@model List<GymManagementSystem.WebUI.Models.ViewModels.ServiceViewModel>
 
 @{
-    ViewData["Title"] = "Salon Listesi";
+    ViewData["Title"] = "Hizmet Listesi";
     Layout = "_Layout";
 }
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="text-primary mb-0"><i class="fa-solid fa-building"></i> Salon Yönetimi</h2>
+        <h2 class="text-primary"><i class="fa-solid fa-list-check"></i> Hizmet Yönetimi</h2>
         <div>
-            <a asp-action="AddGym" class="btn btn-success me-2">
-                <i class="fa-solid fa-plus"></i> Yeni Salon Ekle
+            <a asp-action="AddService" class="btn btn-success">
+                <i class="fa-solid fa-plus"></i> Yeni Hizmet Ekle
             </a>
             <a asp-action="Index" class="btn btn-secondary">
                 <i class="fa-solid fa-arrow-left"></i> Geri Dön
@@ -39,9 +39,10 @@
             <table class="table table-hover table-striped mb-0">
                 <thead class="bg-light">
                     <tr>
-                        <th>Salon Adı</th>
-                        <th>Adres</th>
-                        <th>Çalışma Saatleri</th>
+                        <th>Hizmet Adı</th>
+                        <th>Salon</th>
+                        <th>Süre</th>
+                        <th>Ücret</th>
                         <th class="text-end">İşlemler</th>
                     </tr>
                 </thead>
@@ -50,20 +51,17 @@
                     {
                         <tr>
                             <td class="fw-bold">@item.Name</td>
-                            <td>@item.Address</td>
-                            <td>
-                                <span class="badge bg-info text-dark">
-                                    @item.OpenTime.ToString(@"hh\:mm") - @item.CloseTime.ToString(@"hh\:mm")
-                                </span>
-                            </td>
+                            <td><span class="badge bg-info text-dark">@item.GymName</span></td>
+                            <td>@item.Duration Dk.</td>
+                            <td>@item.Price ₺</td>
                             <td class="text-end">
-                                <a asp-action="EditGym" asp-route-id="@item.Id" class="btn btn-sm btn-warning">
-                                    <i class="fa-solid fa-pen"></i> Düzenle
+                                <a asp-action="EditService" asp-route-id="@item.Id" class="btn btn-sm btn-warning">
+                                    <i class="fa-solid fa-pen"></i>
                                 </a>
-                                <a asp-action="DeleteGym" asp-route-id="@item.Id"
+                                <a asp-action="DeleteService" asp-route-id="@item.Id"
                                    class="btn btn-sm btn-danger ms-1"
-                                   onclick="return confirm('@item.Name isimli salonu silmek istediğinize emin misiniz?');">
-                                    <i class="fa-solid fa-trash"></i> Sil
+                                   onclick="return confirm('@item.Name hizmetini silmek istediğinize emin misiniz?');">
+                                    <i class="fa-solid fa-trash"></i>
                                 </a>
                             </td>
                         </tr>
@@ -74,7 +72,7 @@
             @if (Model.Count == 0)
             {
                 <div class="alert alert-warning m-3 text-center">
-                    Henüz kayıtlı bir spor salonu bulunmamaktadır.
+                    Henüz kayıtlı bir hizmet bulunmamaktadır.
                 </div>
             }
         </div>

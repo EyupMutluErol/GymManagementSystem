@@ -3,6 +3,7 @@ using GymManagementSystem.Business.Dtos;
 using GymManagementSystem.DataAccess.Abstract;
 using GymManagementSystem.Entities.Concrete;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace GymManagementSystem.Business.Concrete;
 
@@ -10,11 +11,15 @@ public class AppUserManager:GenericManager<AppUser>,IAppUserService
 {
     private readonly IAppUserRepository _appUserRepository;
     private readonly UserManager<AppUser> _userManager;
+    private readonly IServiceRepository _serviceRepository;
+    private readonly ITrainerServiceRepository _trainerServiceRepository;
 
-    public AppUserManager(IAppUserRepository appUserRepository, UserManager<AppUser> userManager) : base(appUserRepository)
+    public AppUserManager(IAppUserRepository appUserRepository, UserManager<AppUser> userManager, IServiceRepository serviceRepository, ITrainerServiceRepository trainerServiceRepository) : base(appUserRepository)
     {
         _appUserRepository = appUserRepository;
         _userManager = userManager;
+        _serviceRepository = serviceRepository;
+        _trainerServiceRepository = trainerServiceRepository;
     }
 
     public async Task<List<AppUser>> GetUsersByRoleAsync(string roleName)
@@ -64,6 +69,16 @@ public class AppUserManager:GenericManager<AppUser>,IAppUserService
 
             // 3. Yeni rolü ekle
             await _userManager.AddToRoleAsync(user, newRole);
+
+            if (newRole == "Member")
+            {
+                user.GymId = null;       // Salon bağını kopar
+                user.ShiftStart = null;  // Vardiyayı temizle
+                user.ShiftEnd = null;
+
+                // Kullanıcıyı güncelle
+                await _userManager.UpdateAsync(user);
+            }
         }
     }
 
@@ -73,6 +88,83 @@ public class AppUserManager:GenericManager<AppUser>,IAppUserService
         if (user != null)
         {
             await _userManager.DeleteAsync(user);
+        }
+    }
+
+    public async Task<TrainerDetailDto> GetTrainerDetailsAsync(int trainerId)
+    {
+        var user = await _userManager.Users
+            .Include(u => u.TrainerServices) // Mevcut uzmanlıklarını da çek
+            .FirstOrDefaultAsync(u => u.Id == trainerId);
+
+        if (user == null) return null;
+
+        var dto = new TrainerDetailDto
+        {
+            UserId = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            GymId = user.GymId,
+            ServiceList = new List<ServiceCheckBoxDto>()
+        };
+
+        // Eğer bir salona atanmışsa, o salonun hizmetlerini listele
+        if (user.GymId.HasValue)
+        {
+            // Salondaki tüm hizmetleri çek
+            var gymServices = _serviceRepository.GetListByFilter(x => x.GymId == user.GymId.Value);
+
+            foreach (var service in gymServices)
+            {
+                // Hoca bu hizmeti veriyor mu?
+                bool isAssigned = user.TrainerServices.Any(ts => ts.ServiceId == service.Id);
+
+                dto.ServiceList.Add(new ServiceCheckBoxDto
+                {
+                    ServiceId = service.Id,
+                    ServiceName = service.Name,
+                    IsSelected = isAssigned
+                });
+            }
+        }
+
+        return dto;
+    }
+
+    public async Task UpdateTrainerDetailsAsync(TrainerDetailDto trainerDto)
+    {
+        var user = await _userManager.FindByIdAsync(trainerDto.UserId.ToString());
+        if (user != null)
+        {
+            // 1. Salon Ataması
+            user.GymId = trainerDto.GymId;
+            await _userManager.UpdateAsync(user);
+
+            // 2. Uzmanlık (Hizmet) Güncellemesi
+            // Önce eskileri temizle
+            var oldServices = _trainerServiceRepository.GetListByFilter(x => x.AppUserId == user.Id);
+            foreach (var old in oldServices)
+            {
+                _trainerServiceRepository.Delete(old);
+            }
+
+            // --- HATA DÜZELTME BURADA ---
+            // Liste null ise (yani hiç hizmet yoksa) döngüye girme!
+            if (trainerDto.ServiceList != null)
+            {
+                foreach (var item in trainerDto.ServiceList)
+                {
+                    if (item.IsSelected)
+                    {
+                        _trainerServiceRepository.Insert(new TrainerService
+                        {
+                            AppUserId = user.Id,
+                            ServiceId = item.ServiceId
+                        });
+                    }
+                }
+            }
         }
     }
 }

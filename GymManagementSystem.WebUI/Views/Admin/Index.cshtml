@@ -14,104 +14,124 @@
         </div>
     </div>
 
-    <div class="row mt-4">
-        <div class="col-md-3">
-            <div class="card text-white bg-primary mb-3 shadow">
-                <div class="card-header">Toplam Üye</div>
-                <div class="card-body">
-                    <h5 class="card-title display-4 text-center">
+    <!-- İSTATİSTİK KARTLARI (5'i Yan Yana) -->
+    <!-- row-cols-md-5 sınıfı, masaüstünde 5 eşit sütun oluşturur -->
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3 mt-3">
+
+        <!-- 1. Toplam Üye -->
+        <div class="col">
+            <div class="card text-white bg-primary shadow h-100">
+                <div class="card-header text-center fw-bold" style="font-size: 0.9rem;">Toplam Üye</div>
+                <div class="card-body text-center p-2">
+                    <h2 class="card-title fw-bold mb-0">
                         <i class="fa-solid fa-users"></i> @Model.TotalMemberCount
-                    </h5>
+                    </h2>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card text-white bg-success mb-3 shadow">
-                <div class="card-header">Aktif Eğitmen</div>
-                <div class="card-body">
-                    <h5 class="card-title display-4 text-center">
+        <!-- 2. Aktif Eğitmen -->
+        <div class="col">
+            <div class="card text-white bg-success shadow h-100">
+                <div class="card-header text-center fw-bold" style="font-size: 0.9rem;">Eğitmenler</div>
+                <div class="card-body text-center p-2">
+                    <h2 class="card-title fw-bold mb-0">
                         <i class="fa-solid fa-chalkboard-user"></i> @Model.ActiveTrainerCount
-                    </h5>
+                    </h2>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card text-white bg-warning mb-3 shadow">
-                <div class="card-header">Bekleyen Randevu</div>
-                <div class="card-body">
-                    <h5 class="card-title display-4 text-center">
+        <!-- 3. Bekleyen Randevu -->
+        <div class="col">
+            <div class="card text-dark bg-warning shadow h-100">
+                <div class="card-header text-center fw-bold" style="font-size: 0.9rem;">Randevular</div>
+                <div class="card-body text-center p-2">
+                    <h2 class="card-title fw-bold mb-0">
                         <i class="fa-solid fa-clock"></i> @Model.PendingAppointmentCount
-                    </h5>
+                    </h2>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3">
-            <div class="card text-white bg-info mb-3 shadow">
-                <div class="card-header">Spor Salonu</div>
-                <div class="card-body">
-                    <h5 class="card-title display-4 text-center">
+        <!-- 4. Spor Salonları -->
+        <div class="col">
+            <div class="card text-white bg-info shadow h-100">
+                <div class="card-header text-center fw-bold" style="font-size: 0.9rem;">Salonlar</div>
+                <div class="card-body text-center p-2">
+                    <h2 class="card-title fw-bold mb-0">
                         <i class="fa-solid fa-building"></i> @Model.TotalGymCount
-                    </h5>
+                    </h2>
                 </div>
             </div>
         </div>
 
-        <div class="row mt-5">
-
-            <!-- SOL TARA: EKLEME İŞLEMLERİ -->
-            <div class="col-md-6">
-                <div class="card shadow-sm h-100 border-0">
-                    <div class="card-header bg-white border-bottom-0">
-                        <h5 class="text-success mb-0"><i class="fa-solid fa-plus-circle"></i> Ekleme İşlemleri</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-grid gap-2">
-                            <!-- Salon Ekle -->
-                            <a asp-controller="Admin" asp-action="AddGym" class="btn btn-outline-success btn-lg text-start">
-                                <i class="fa-solid fa-dumbbell me-2"></i> Yeni Salon Ekle
-                            </a>
-                            <a asp-controller="Admin" asp-action="AddTrainer" class="btn btn-outline-success btn-lg text-start mt-2">
-                                <i class="fa-solid fa-user-plus me-2"></i> Yeni Eğitmen Ata
-                            </a>
-                            <!-- İleride buraya 'Yeni Hizmet Ekle' vb. gelebilir -->
-                            <!-- Şimdilik Eğitmen atama işlemini de buraya koyabiliriz veya UserList'e yönlendirebiliriz -->
-                            <a href="#" class="btn btn-outline-success btn-lg text-start disabled">
-                                <i class="fa-solid fa-user-plus me-2"></i> Yeni Hizmet Ekle (Yakında)
-                            </a>
-                        </div>
-                    </div>
+        <!-- 5. Hizmet Sayısı -->
+        <div class="col">
+            <div class="card text-white bg-secondary shadow h-100">
+                <div class="card-header text-center fw-bold" style="font-size: 0.9rem;">Hizmetler</div>
+                <div class="card-body text-center p-2">
+                    <h2 class="card-title fw-bold mb-0">
+                        <i class="fa-solid fa-list-check"></i> @Model.TotalServiceCount
+                    </h2>
                 </div>
             </div>
-
-            <!-- SAĞ TARAF: LİSTELEME İŞLEMLERİ -->
-            <div class="col-md-6">
-                <div class="card shadow-sm h-100 border-0">
-                    <div class="card-header bg-white border-bottom-0">
-                        <h5 class="text-primary mb-0"><i class="fa-solid fa-list"></i> Listeleme İşlemleri</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-grid gap-2">
-                            <!-- Salon Listesi -->
-                            <a asp-controller="Admin" asp-action="GymList" class="btn btn-outline-primary btn-lg text-start">
-                                <i class="fa-solid fa-building me-2"></i> Salonları Listele
-                            </a>
-
-                            <!-- Üye Listesi -->
-                            <a asp-controller="Admin" asp-action="UserList" class="btn btn-outline-primary btn-lg text-start">
-                                <i class="fa-solid fa-users me-2"></i> Üyeleri Listele
-                            </a>
-                            <a asp-controller="Admin" asp-action="TrainerList" class="btn btn-outline-success btn-lg text-start">
-                                <i class="fa-solid fa-chalkboard-user me-2"></i> Eğitmenleri Listele
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
+
     </div>
+
+    <!-- Alt Menü: Hızlı İşlemler -->
+    <div class="row mt-5">
+        <!-- SOL TARA: EKLEME İŞLEMLERİ -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-header bg-white border-bottom-0">
+                    <h5 class="text-success mb-0"><i class="fa-solid fa-plus-circle"></i> Ekleme İşlemleri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Admin" asp-action="AddGym" class="btn btn-outline-success btn-lg text-start">
+                            <i class="fa-solid fa-dumbbell me-2"></i> Yeni Salon Ekle
+                        </a>
+
+                        <a asp-controller="Admin" asp-action="AddService" class="btn btn-outline-success btn-lg text-start">
+                            <i class="fa-solid fa-hand-holding-dollar me-2"></i> Yeni Hizmet Ekle
+                        </a>
+
+                        <a asp-controller="Admin" asp-action="AddTrainer" class="btn btn-outline-success btn-lg text-start">
+                            <i class="fa-solid fa-user-plus me-2"></i> Yeni Eğitmen Ata
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SAĞ TARAF: LİSTELEME İŞLEMLERİ -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-header bg-white border-bottom-0">
+                    <h5 class="text-primary mb-0"><i class="fa-solid fa-list"></i> Listeleme İşlemleri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Admin" asp-action="GymList" class="btn btn-outline-primary btn-lg text-start">
+                            <i class="fa-solid fa-building me-2"></i> Salonları Listele
+                        </a>
+
+                        <a asp-controller="Admin" asp-action="ServiceList" class="btn btn-outline-primary btn-lg text-start">
+                            <i class="fa-solid fa-list me-2"></i> Hizmetleri Listele
+                        </a>
+
+                        <a asp-controller="Admin" asp-action="UserList" class="btn btn-outline-primary btn-lg text-start">
+                            <i class="fa-solid fa-users me-2"></i> Üyeleri Listele
+                        </a>
+
+                        <a asp-controller="Admin" asp-action="TrainerList" class="btn btn-outline-success btn-lg text-start">
+                            <i class="fa-solid fa-chalkboard-user me-2"></i> Eğitmenleri Listele
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

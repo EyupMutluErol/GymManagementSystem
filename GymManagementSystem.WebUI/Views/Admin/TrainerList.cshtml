@@ -37,7 +37,11 @@
                             <td>@item.Email</td>
                             <td><span class="badge bg-success">Eğitmen</span></td>
                             <td class="text-end">
-                                <!-- Eğitmeni Üye Yap (Yetkisini Al) Butonu -->
+
+                                <a asp-action="EditTrainer" asp-route-id="@item.Id" class="btn btn-sm btn-warning me-1">
+                                    <i class="fa-solid fa-pen"></i> Düzenle
+                                </a>
+
                                 <form asp-action="ChangeRole" method="post" style="display:inline;">
                                     <input type="hidden" name="id" value="@item.Id" />
                                     <input type="hidden" name="role" value="Member" />

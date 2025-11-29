@@ -19,7 +19,7 @@ public class EfGenericRepository<T>:IGenericRepository<T> where T : class
         _context.SaveChanges();
     }
 
-    public T GetByID(int id)
+    public T GetById(int id)
     {
         return _context.Set<T>().Find(id);
     }

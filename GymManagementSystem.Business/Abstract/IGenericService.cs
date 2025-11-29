@@ -9,5 +9,5 @@ public interface IGenericService<T>
     void Update(T entity);
     List<T> GetList();
     List<T> GetListByFilter(Expression<Func<T, bool>> filter);
-    T GetByID(int id);
+    T GetById(int id);
 }

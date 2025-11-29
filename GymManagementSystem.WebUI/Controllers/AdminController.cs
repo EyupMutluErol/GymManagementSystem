@@ -1,9 +1,10 @@
 ﻿using GymManagementSystem.Business.Abstract;
+using GymManagementSystem.Business.Dtos;
 using GymManagementSystem.Entities.Concrete;
 using GymManagementSystem.WebUI.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GymManagementSystem.WebUI.Controllers
 {
@@ -13,14 +14,17 @@ namespace GymManagementSystem.WebUI.Controllers
         private readonly IAppUserService _appUserService;
         private readonly IGymService _gymService;
         private readonly IAppointmentService _appointmentService;
+        private readonly IServiceService _serviceService;
 
-        public AdminController(IAppUserService appUserService, IGymService gymService, IAppointmentService appointmentService)
+        public AdminController(IAppUserService appUserService, IGymService gymService, IAppointmentService appointmentService,IServiceService serviceService)
         {
             _appUserService = appUserService;
             _gymService = gymService;
             _appointmentService = appointmentService;
+            _serviceService = serviceService;
         }
 
+        // ADMİN DASHBOARD
         public async Task<IActionResult> Index()
         {
             var members = await _appUserService.GetUsersByRoleAsync("Member");
@@ -29,13 +33,15 @@ namespace GymManagementSystem.WebUI.Controllers
             var pendingApps = _appointmentService.GetListByFilter(x => x.Status == AppointmentStatus.Pending);
 
             var gyms = _gymService.GetList();
+            var services = _serviceService.GetList();
 
             var model = new DashboardViewModel
             {
                 TotalMemberCount = members.Count,
                 ActiveTrainerCount = trainers.Count,
                 PendingAppointmentCount = pendingApps.Count,
-                TotalGymCount = gyms.Count
+                TotalGymCount = gyms.Count,
+                TotalServiceCount = services.Count
             };
 
             return View(model);
@@ -68,6 +74,14 @@ namespace GymManagementSystem.WebUI.Controllers
             return View(memberList);
         }
 
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            await _appUserService.DeleteUserAsync(id);
+            return RedirectToAction("UserList");
+        }
+
+
+        // ANTRENÖR YÖNETİMİ
         [HttpGet]
         public async Task<IActionResult> TrainerList()
         {
@@ -92,21 +106,67 @@ namespace GymManagementSystem.WebUI.Controllers
 
             return View(trainerList);
         }
-        public async Task<IActionResult> ChangeRole(int id, string role)
-        {
-            // Servise "Bu ID'li kullanıcının rolünü şununla değiştir" diyoruz
-            await _appUserService.ChangeUserRoleAsync(id, role);
 
-            // İşlem bitince listeye geri dönüyoruz (Sayfa yenilenmiş oluyor)
-            return RedirectToAction("UserList");
+        [HttpGet]
+        public async Task<IActionResult> AddTrainer()
+        {
+            // Sadece "Member" (Normal Üye) olanları getir.
+            // Çünkü zaten Trainer olanı tekrar Trainer yapmaya gerek yok.
+            var members = await _appUserService.GetUsersByRoleAsync("Member");
+
+            var modelList = new List<UserListViewModel>();
+
+            foreach (var item in members)
+            {
+                modelList.Add(new UserListViewModel
+                {
+                    Id = item.Id,
+                    FirstName = item.FirstName,
+                    LastName = item.LastName,
+                    Email = item.Email,
+                    RoleName = "Member" // Zaten member olduklarını biliyoruz
+                });
+            }
+
+            return View(modelList);
         }
 
-        public async Task<IActionResult> DeleteUser(int id)
+        [HttpPost]
+        public async Task<IActionResult> MakeTrainer(int userId)
         {
-            await _appUserService.DeleteUserAsync(id);
-            return RedirectToAction("UserList");
+            // Seçilen kullanıcıyı "Trainer" yap
+            await _appUserService.ChangeUserRoleAsync(userId, "Trainer");
+
+            // İşlem bitince listeye geri dön veya dashboarda git
+            return RedirectToAction("AddTrainer");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditTrainer(int id)
+        {
+            // Servisten veriyi çek
+            var dto = await _appUserService.GetTrainerDetailsAsync(id);
+            if (dto == null) return NotFound();
+
+            // Salon listesini ViewBag'e koy (Dropdown için)
+            var gyms = _gymService.GetList();
+            ViewBag.Gyms = new SelectList(gyms, "Id", "Name", dto.GymId);
+
+            // DTO'yu View'a gönder (View direkt DTO kullanabilir veya ViewModel'e çevirebilirsin)
+            // Hızlı çözüm için DTO'yu View'da kullanacağız.
+            return View(dto);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditTrainer(TrainerDetailDto model)
+        {
+            // Güncelleme isteğini servise gönder
+            await _appUserService.UpdateTrainerDetailsAsync(model);
+
+            // Eğer salon değiştiyse hizmet listesi sıfırlanır, sayfayı yenilemek en iyisidir
+            // Veya listeye dön
+            return RedirectToAction("TrainerList");
+        }
 
         // SALON YÖNETİMİ
         [HttpGet]
@@ -164,39 +224,214 @@ namespace GymManagementSystem.WebUI.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public IActionResult EditGym(int id)
+        {
+            // 1. Düzenlenecek salonu bul
+            var gym = _gymService.GetById(id);
+
+            if (gym == null)
+            {
+                return NotFound();
+            }
+
+            // 2. Entity'yi ViewModel'e çevir
+            var model = new GymViewModel
+            {
+                Id = gym.Id,
+                Name = gym.Name,
+                Address = gym.Address,
+                OpenTime = gym.OpenTime,
+                CloseTime = gym.CloseTime
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult EditGym(GymViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // 1. Veritabanındaki orijinal kaydı bul
+                var gymEntity = _gymService.GetById(model.Id);
+
+                if (gymEntity == null)
+                {
+                    return NotFound();
+                }
+
+                // 2. Yeni değerleri aktar
+                gymEntity.Name = model.Name;
+                gymEntity.Address = model.Address;
+                gymEntity.OpenTime = model.OpenTime;
+                gymEntity.CloseTime = model.CloseTime;
+
+                // 3. Güncelle
+                _gymService.Update(gymEntity);
+
+                return RedirectToAction("GymList");
+            }
+
+            return View(model);
+        }
+
+        public IActionResult DeleteGym(int id)
+        {
+            try
+            {
+                var gym = _gymService.GetById(id);
+                if (gym != null)
+                {
+                    _gymService.Delete(gym);
+                    TempData["SuccessMessage"] = "Salon başarıyla silindi.";
+                }
+            }
+            catch (Exception)
+            {
+                // Veritabanı hatası (Constraint Error) oluşursa buraya düşer
+                TempData["ErrorMessage"] = "Bu salon silinemez! Çünkü içinde kayıtlı antrenörler veya hizmetler var. Önce onları silmeli veya başka salona taşımalısınız.";
+            }
+
+            return RedirectToAction("GymList");
+        }
+
+        // SERVICE YÖNETİMİ
 
         [HttpGet]
-        public async Task<IActionResult> AddTrainer()
+        public IActionResult ServiceList()
         {
-            // Sadece "Member" (Normal Üye) olanları getir.
-            // Çünkü zaten Trainer olanı tekrar Trainer yapmaya gerek yok.
-            var members = await _appUserService.GetUsersByRoleAsync("Member");
+            var services = _serviceService.GetList();
+            var gyms = _gymService.GetList();
 
-            var modelList = new List<UserListViewModel>();
+            var modelList = new List<ServiceViewModel>();
 
-            foreach (var item in members)
+            foreach (var item in services)
             {
-                modelList.Add(new UserListViewModel
+                var gym = gyms.FirstOrDefault(x => x.Id == item.GymId);
+                modelList.Add(new ServiceViewModel
                 {
                     Id = item.Id,
-                    FirstName = item.FirstName,
-                    LastName = item.LastName,
-                    Email = item.Email,
-                    RoleName = "Member" // Zaten member olduklarını biliyoruz
+                    Name = item.Name,
+                    Duration = item.Duration,
+                    Price = item.Price,
+                    GymName = gym != null ? gym.Name : "Belirtilmemiş"
                 });
             }
 
             return View(modelList);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> MakeTrainer(int userId)
+        [HttpGet]
+        public IActionResult AddService()
         {
-            // Seçilen kullanıcıyı "Trainer" yap
-            await _appUserService.ChangeUserRoleAsync(userId, "Trainer");
+            var gyms = _gymService.GetList();
+            ViewBag.Gyms = new SelectList(gyms, "Id", "Name");
+            return View();
+        }
 
-            // İşlem bitince listeye geri dön veya dashboarda git
-            return RedirectToAction("AddTrainer");
+        [HttpPost]
+        public IActionResult AddService(ServiceViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var service = new Service
+                {
+                    Name = model.Name,
+                    Duration = model.Duration,
+                    Price = model.Price,
+                    GymId = model.GymId
+                };
+
+                _serviceService.Insert(service);
+                return RedirectToAction("ServiceList");
+            }
+
+            var gyms = _gymService.GetList();
+            ViewBag.Gyms = new SelectList(gyms, "Id", "Name");
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult EditService(int id)
+        {
+            var service = _serviceService.GetById(id);
+            if (service == null)
+            {
+                return NotFound();
+            }
+
+            var model = new ServiceViewModel
+            {
+                Id = service.Id,
+                Name = service.Name,
+                Duration = service.Duration,
+                Price = service.Price,
+                GymId = service.GymId
+            };
+
+            // Dropdown için salonları getir ve mevcut salonu SEÇİLİ yap
+            var gyms = _gymService.GetList();
+            ViewBag.Gyms = new SelectList(gyms, "Id", "Name", service.GymId);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult EditService(ServiceViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var service = _serviceService.GetById(model.Id);
+                if (service == null)
+                {
+                    return NotFound();
+                }
+
+                // Güncelleme
+                service.Name = model.Name;
+                service.Duration = model.Duration;
+                service.Price = model.Price;
+                service.GymId = model.GymId;
+
+                _serviceService.Update(service);
+                return RedirectToAction("ServiceList");
+            }
+
+            // Hata varsa dropdown'ı tekrar doldur
+            var gyms = _gymService.GetList();
+            ViewBag.Gyms = new SelectList(gyms, "Id", "Name", model.GymId);
+
+            return View(model);
+        }
+
+        public IActionResult DeleteService(int id)
+        {
+            try
+            {
+                var service = _serviceService.GetById(id);
+                if (service != null)
+                {
+                    _serviceService.Delete(service);
+                    TempData["SuccessMessage"] = "Hizmet başarıyla silindi.";
+                }
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Bu hizmet silinemez! Çünkü bu hizmete ait alınmış randevular mevcut.";
+            }
+
+            return RedirectToAction("ServiceList");
+        }
+
+        // EKSTRA METHODLAR
+        public async Task<IActionResult> ChangeRole(int id, string role)
+        {
+            // Servise "Bu ID'li kullanıcının rolünü şununla değiştir" diyoruz
+            await _appUserService.ChangeUserRoleAsync(id, role);
+
+            // İşlem bitince listeye geri dönüyoruz (Sayfa yenilenmiş oluyor)
+            return RedirectToAction("UserList");
         }
     }
 }
