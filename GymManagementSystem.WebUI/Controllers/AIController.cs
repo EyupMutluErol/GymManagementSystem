@@ -14,7 +14,7 @@ public class AIController : Controller
     {
         _aiService = aiService;
     }
-
+     
     [HttpGet]
     public IActionResult Index()
     {
