@@ -61,6 +61,7 @@ builder.Services.AddScoped<IGymService, GymManager>();
 builder.Services.AddScoped<IServiceService, ServiceManager>();
 builder.Services.AddScoped<IAppointmentService, AppointmentManager>();
 builder.Services.AddScoped<ITrainerServiceService, TrainerServiceManager>();
+builder.Services.AddScoped<IAIService, GeminiApiService>();
 
 
 
