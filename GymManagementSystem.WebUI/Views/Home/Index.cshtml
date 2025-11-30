@@ -1,22 +1,136 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+@using GymManagementSystem.Entities.Concrete
+
+<!-- Kullanıcı bilgilerini çekmek için UserManager'ı sayfaya dahil ediyoruz -->
+@inject UserManager<AppUser> UserManager
+
+@{
     ViewData["Title"] = "Ana Sayfa";
 }
 
-<div class="text-center mt-5">
-    <h1 class="display-4 fw-bold text-primary">Gym Yönetim Sistemine Hoşgeldiniz</h1>
-    <p class="lead">Spor salonu randevularınızı kolayca yönetin, programınızı takip edin.</p>
+<!-- 1. HERO BÖLÜMÜ -->
+<div class="p-5 mb-4 bg-dark rounded-3 hero-section d-flex align-items-center">
+    <div class="container-fluid py-5 text-white">
+        <h1 class="display-3 fw-bold animate-up">Sınırlarını Zorla, <br><span class="text-primary">Potansiyelini Keşfet</span></h1>
+        <p class="col-md-8 fs-4 mt-3 animate-up delay-1">
+            Yapay zeka destekli analizler, uzman antrenörler ve esnek randevu sistemiyle spor deneyimini baştan tanımlıyoruz.
+        </p>
+        
+        <div class="mt-4 animate-up delay-2">
+            @if (User.Identity.IsAuthenticated)
+            {
+                <!-- BURASI GÜNCELLENDİ: Kullanıcının Adını Çekiyoruz -->
+                
+                    var user = await UserManager.GetUserAsync(User);
+                    var displayName = user != null ? user.FirstName : User.Identity.Name;
+                
 
-    @if (!User.Identity.IsAuthenticated)
-    {
-        <hr class="my-4">
-        <p>Hemen başlamak için giriş yapın veya kayıt olun.</p>
-        <a class="btn btn-primary btn-lg" href="/Account/Login" role="button">Giriş Yap</a>
-        <a class="btn btn-secondary btn-lg" href="/Account/Register" role="button">Kayıt Ol</a>
-    }
-    else
-    {
-        <div class="alert alert-success mt-4">
-            <i class="fa-solid fa-check-circle"></i> Şu an oturum açmış durumdasınız.
+                <h4 class="mb-3"><i class="fa-solid fa-user-check text-success"></i> Hoşgeldin, @displayName!</h4>
+                
+                <a class="btn btn-primary btn-lg me-2" href="/Appointment/Create" role="button">
+                    <i class="fa-solid fa-calendar-plus"></i> Hemen Randevu Al
+                </a>
+                <a class="btn btn-outline-light btn-lg" href="/Appointment/MyAppointments" role="button">
+                    <i class="fa-solid fa-list-check"></i> Randevularım
+                </a>
+            }
+            else
+            {
+                <a class="btn btn-primary btn-lg me-2" href="/Account/Register" role="button">
+                    <i class="fa-solid fa-rocket"></i> Aramıza Katıl
+                </a>
+                <a class="btn btn-outline-light btn-lg" href="/Account/Login" role="button">
+                    <i class="fa-solid fa-right-to-bracket"></i> Giriş Yap
+                </a>
+            }
         </div>
-    }
+    </div>
 </div>
+
+<!-- 2. ÖZELLİKLER (Kartlar) -->
+<div class="container marketing mt-5">
+    <div class="row text-center">
+        
+        <div class="col-lg-4 mb-4">
+            <div class="feature-card p-4 h-100 rounded-3 shadow-sm border-0">
+                <div class="icon-box bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                    <i class="fa-solid fa-calendar-days fa-2x"></i>
+                </div>
+                <h3 class="fw-bold">Kolay Randevu</h3>
+                <p class="text-muted">İstediğin salondan, istediğin eğitmenden saniyeler içinde randevu al. Planını kendin yönet.</p>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="feature-card p-4 h-100 rounded-3 shadow-sm border-0">
+                <div class="icon-box bg-success text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                    <i class="fa-solid fa-dumbbell fa-2x"></i>
+                </div>
+                <h3 class="fw-bold">Profesyonel Ekipman</h3>
+                <p class="text-muted">En yeni teknoloji spor aletleri ve hijyenik salonlarımızla spordan maksimum verim al.</p>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="feature-card p-4 h-100 rounded-3 shadow-sm border-0">
+                <div class="icon-box bg-warning text-dark rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                    <i class="fa-solid fa-brain fa-2x"></i>
+                </div>
+                <h3 class="fw-bold">Yapay Zeka (AI)</h3>
+                <p class="text-muted">Fiziksel özelliklerine göre sana özel antrenman programı hazırlayan akıllı asistanımızla tanış.</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- 3. AI TANITIM BANDI -->
+<div class="bg-dark text-white py-5 mt-5 rounded-3 position-relative overflow-hidden">
+    <div class="container position-relative z-1">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="fw-bold text-warning"><i class="fa-solid fa-robot"></i> AI Antrenörün Hazır!</h2>
+                <p class="lead">Vücut tipini, kilonu ve hedefini söyle; yapay zeka sana en uygun antrenman programını saniyeler içinde oluştursun.</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <button class="btn btn-warning btn-lg fw-bold text-dark px-4 disabled">Çok Yakında...</button>
+            </div>
+        </div>
+    </div>
+    <i class="fa-solid fa-microchip position-absolute text-secondary opacity-25" style="font-size: 15rem; right: -50px; top: -50px;"></i>
+</div>
+
+<!-- CSS STİLLERİ -->
+<style>
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), 
+                    url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1470&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        min-height: 500px;
+    }
+
+    .feature-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: #fff;
+    }
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+
+    .animate-up {
+        animation: fadeInUp 0.8s ease-out forwards;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    .delay-1 { animation-delay: 0.2s; }
+    .delay-2 { animation-delay: 0.4s; }
+
+    @@keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
