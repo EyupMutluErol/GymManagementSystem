@@ -77,15 +77,24 @@
                             var user = await UserManager.GetUserAsync(User);
                             var displayName = user != null ? user.FirstName : User.Identity.Name;
 
-                            <li class="nav-item d-flex align-items-center">
-                                <span class="text-white me-3">
-                                    <i class="fa-solid fa-user-circle"></i> Merhaba, @displayName
-                                </span>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-outline-danger btn-sm" asp-controller="Account" asp-action="Logout">
-                                    <i class="fa-solid fa-right-from-bracket"></i> Çıkış Yap
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-circle-user fa-2x me-2"></i>
+                                    <span class="fw-bold">@displayName</span>
                                 </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Account" asp-action="Profile">
+                                            <i class="fa-solid fa-user-gear"></i> Profil Ayarları
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout">
+                                            <i class="fa-solid fa-right-from-bracket"></i> Çıkış Yap
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                         }
                         else
