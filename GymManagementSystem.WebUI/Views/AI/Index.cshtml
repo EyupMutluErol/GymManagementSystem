@@ -51,21 +51,25 @@
                         <div class="mb-3">
                             <label class="form-label">Hedefiniz</label>
                             <select asp-for="Goal" class="form-select">
+                                <option value="">-- Lütfen Seçiniz --</option> 
                                 <option>Kilo Vermek & Yağ Yakmak</option>
                                 <option>Kas Kütlesini Artırmak</option>
                                 <option>Formu Korumak & Sıkılaşmak</option>
                                 <option>Güç ve Kondisyon Artırmak</option>
                             </select>
+                            <span asp-validation-for="Goal" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Aktivite Düzeyi</label>
                             <select asp-for="ActivityLevel" class="form-select">
+                                <option value="">-- Lütfen Seçiniz --</option>
                                 <option>Hareketsiz (Masa başı iş)</option>
                                 <option>Az Hareketli (Haftada 1-2 spor)</option>
                                 <option>Orta Hareketli (Haftada 3-4 spor)</option>
                                 <option>Çok Hareketli (Haftada 5+ spor)</option>
                             </select>
+                            <span asp-validation-for="ActivityLevel" class="text-danger"></span>
                         </div>
 
                         <div class="d-grid">

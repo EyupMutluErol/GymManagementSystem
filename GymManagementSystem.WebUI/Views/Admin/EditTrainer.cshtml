@@ -12,18 +12,32 @@
         </div>
         <div class="card-body">
             <form asp-action="EditTrainer" method="post">
+
+                <!-- HATA MESAJI KUTUSU (BURASI DÜZELTİLDİ) -->
+                <!-- asp-validation-summary="All" diyerek hem model hem property hatalarını gösteriyoruz -->
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <h6 class="alert-heading fw-bold"><i class="fa-solid fa-circle-exclamation"></i> Bir Sorun Oluştu:</h6>
+                        <div asp-validation-summary="All" class="text-danger mb-0"></div>
+                    </div>
+                }
+
                 <input type="hidden" asp-for="UserId" />
                 <input type="hidden" asp-for="FirstName" />
                 <input type="hidden" asp-for="LastName" />
                 <input type="hidden" asp-for="Email" />
 
+                <!-- 1. SALON SEÇİMİ -->
                 <div class="mb-4">
                     <label class="form-label fw-bold">Çalıştığı Salon</label>
                     <select asp-for="GymId" class="form-select" asp-items="ViewBag.Gyms" id="gymDropdown">
                         <option value="">-- Bir Salon Atayın --</option>
                     </select>
+                    <div class="form-text text-muted">Hocanın verebileceği dersleri görmek için bir salon seçiniz.</div>
                 </div>
 
+                <!-- 2. MESAİ SAATLERİ (YENİ EKLENMİŞTİ) -->
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <label class="form-label fw-bold">Mesai Başlangıç</label>
@@ -35,11 +49,11 @@
                     </div>
                 </div>
 
+                <!-- 3. HİZMET (UZMANLIK) SEÇİMİ -->
                 <h5 class="border-bottom pb-2 mb-3">Verebileceği Hizmetler</h5>
 
                 <div class="row" id="servicesContainer">
-
-                    @if (Model.ServiceList != null)
+                    @if (Model.ServiceList != null && Model.ServiceList.Any())
                     {
                         foreach (var item in Model.ServiceList)
                         {
@@ -52,6 +66,12 @@
                                 </div>
                             </div>
                         }
+                    }
+                    else
+                    {
+                        <div class="col-12">
+                            <span class="text-muted fst-italic">Lütfen önce bir salon seçiniz.</span>
+                        </div>
                     }
                 </div>
 
@@ -73,18 +93,17 @@
         $(document).ready(function () {
             // Dropdown değiştiğinde çalışacak fonksiyon
             $('#gymDropdown').change(function () {
-                var gymId = $(this).val(); // Seçilen Salon ID'sini al
+                var gymId = $(this).val();
                 var container = $('#servicesContainer');
                 var loading = $('#loadingMessage');
 
-                container.empty(); // Önceki checkboxları temizle
+                container.empty();
 
                 if (gymId) {
-                    loading.show(); // Yükleniyor yazısını göster
+                    loading.show();
 
-                    // AJAX İsteği Atıyoruz
                     $.ajax({
-                        url: '/Admin/GetServicesByGym', // Controller'daki metodumuz
+                        url: '/Admin/GetServicesByGym',
                         type: 'GET',
                         data: { gymId: gymId },
                         success: function (data) {
@@ -93,7 +112,6 @@
                             if (data.length === 0) {
                                 container.append('<div class="alert alert-warning col-12">Bu salonda tanımlı hizmet bulunamadı.</div>');
                             } else {
-                                // Gelen her hizmet için bir checkbox oluştur
                                 $.each(data, function (index, item) {
                                     var checkboxHtml = `
                                         <div class="col-md-4 mb-2">

@@ -173,21 +173,57 @@ namespace GymManagementSystem.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> EditTrainer(TrainerDetailDto model, int[] selectedServices)
         {
+            // Kullanıcıdan gelen ID'leri modele geçici olarak atayalım
+            // (Bu kısım servise gitmek içindir)
             model.ServiceList = new List<ServiceCheckBoxDto>();
-
-            foreach (var serviceId in selectedServices)
+            if (selectedServices != null)
             {
-                model.ServiceList.Add(new ServiceCheckBoxDto
+                foreach (var serviceId in selectedServices)
                 {
-                    ServiceId = serviceId,
-                    IsSelected = true
-                });
+                    model.ServiceList.Add(new ServiceCheckBoxDto { ServiceId = serviceId, IsSelected = true });
+                }
             }
 
-            // Güncelleme isteğini servise gönder
-            await _appUserService.UpdateTrainerDetailsAsync(model);
+            try
+            {
+                // Güncellemeyi dene
+                await _appUserService.UpdateTrainerDetailsAsync(model);
+                return RedirectToAction("TrainerList");
+            }
+            catch (System.Exception ex)
+            {
+                // Hata varsa yakala
+                ModelState.AddModelError("", ex.Message);
+            }
 
-            return RedirectToAction("TrainerList");
+            // --- HATA VARSA SAYFAYI TAMİR ET (BURASI EKLENDİ) ---
+
+            // 1. Salon Dropdown'ını doldur
+            var gyms = _gymService.GetList();
+            ViewBag.Gyms = new SelectList(gyms, "Id", "Name", model.GymId);
+
+            // 2. Hizmet Listesini İSİMLERİYLE birlikte yeniden oluştur
+            if (model.GymId.HasValue)
+            {
+                // Seçilen salondaki tüm hizmetleri veritabanından çek
+                var allGymServices = _serviceService.GetListByFilter(x => x.GymId == model.GymId.Value);
+
+                // Listeyi sıfırla ve baştan düzgünce doldur
+                model.ServiceList = new List<ServiceCheckBoxDto>();
+
+                foreach (var service in allGymServices)
+                {
+                    model.ServiceList.Add(new ServiceCheckBoxDto
+                    {
+                        ServiceId = service.Id,
+                        ServiceName = service.Name, // İsim bilgisini burası getirir
+                        // Kullanıcı az önce bunu işaretlemiş miydi? Kontrol et.
+                        IsSelected = selectedServices != null && selectedServices.Contains(service.Id)
+                    });
+                }
+            }
+
+            return View(model);
         }
 
         // SALON YÖNETİMİ

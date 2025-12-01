@@ -105,20 +105,38 @@
 </div>
 
 <!-- 3. AI TANITIM BANDI -->
-<div class="bg-dark text-white py-5 mt-5 rounded-3 position-relative overflow-hidden">
-    <div class="container position-relative z-1">
-        <div class="row align-items-center">
-            <div class="col-md-8">
-                <h2 class="fw-bold text-warning"><i class="fa-solid fa-robot"></i> AI Antrenörün Hazır!</h2>
-                <p class="lead">Vücut tipini, kilonu ve hedefini söyle; yapay zeka sana en uygun antrenman programını saniyeler içinde oluştursun.</p>
-            </div>
-            <div class="col-md-4 text-end">
-                <button class="btn btn-warning btn-lg fw-bold text-dark px-4 disabled">Çok Yakında...</button>
+@if (!User.Identity.IsAuthenticated || User.IsInRole("Member"))
+{
+    <div class="bg-dark text-white py-5 mt-5 rounded-3 position-relative overflow-hidden">
+        <div class="container position-relative z-1">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h2 class="fw-bold text-warning"><i class="fa-solid fa-robot"></i> AI Antrenörün Hazır!</h2>
+                    <p class="lead">Vücut tipini, kilonu ve hedefini söyle; yapay zeka sana en uygun antrenman programını saniyeler içinde oluştursun.</p>
+                </div>
+                <div class="col-md-4 text-end">
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <!-- Giriş yapmış üye için: Direkt AI sayfasına git -->
+                        <a asp-controller="AI" asp-action="Index" class="btn btn-warning btn-lg fw-bold text-dark px-4">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Hemen Başla
+                        </a>
+                    }
+                    else
+                    {
+                        <!-- Misafir için: Önce giriş yapmaya gönder -->
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-warning btn-lg fw-bold text-dark px-4">
+                            <i class="fa-solid fa-right-to-bracket"></i> Giriş Yap & Dene
+                        </a>
+                    }
+
+                </div>
             </div>
         </div>
+        <i class="fa-solid fa-microchip position-absolute text-secondary opacity-25" style="font-size: 15rem; right: -50px; top: -50px;"></i>
     </div>
-    <i class="fa-solid fa-microchip position-absolute text-secondary opacity-25" style="font-size: 15rem; right: -50px; top: -50px;"></i>
-</div>
+}
 
 <!-- CSS STİLLERİ -->
 <style>

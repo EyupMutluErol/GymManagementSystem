@@ -1,6 +1,7 @@
 ﻿using GymManagementSystem.Business.Abstract;
 using GymManagementSystem.Business.Dtos;
 using GymManagementSystem.DataAccess.Abstract;
+using GymManagementSystem.DataAccess.Concrete.EntityFramework;
 using GymManagementSystem.Entities.Concrete;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,13 +14,15 @@ public class AppUserManager:GenericManager<AppUser>,IAppUserService
     private readonly UserManager<AppUser> _userManager;
     private readonly IServiceRepository _serviceRepository;
     private readonly ITrainerServiceRepository _trainerServiceRepository;
+    private readonly IGymRepository _gymRepository;
 
-    public AppUserManager(IAppUserRepository appUserRepository, UserManager<AppUser> userManager, IServiceRepository serviceRepository, ITrainerServiceRepository trainerServiceRepository) : base(appUserRepository)
+    public AppUserManager(IAppUserRepository appUserRepository, UserManager<AppUser> userManager, IServiceRepository serviceRepository, ITrainerServiceRepository trainerServiceRepository, IGymRepository gymRepository) : base(appUserRepository)
     {
         _appUserRepository = appUserRepository;
         _userManager = userManager;
         _serviceRepository = serviceRepository;
         _trainerServiceRepository = trainerServiceRepository;
+        _gymRepository = gymRepository;
     }
 
     public async Task<List<AppUser>> GetUsersByRoleAsync(string roleName)
@@ -143,24 +146,45 @@ public class AppUserManager:GenericManager<AppUser>,IAppUserService
     public async Task UpdateTrainerDetailsAsync(TrainerDetailDto trainerDto)
     {
         var user = await _userManager.FindByIdAsync(trainerDto.UserId.ToString());
+
+        // Salonu bul (Saatlerini kontrol etmek için)
+        var gym = trainerDto.GymId.HasValue ? _gymRepository.GetById(trainerDto.GymId.Value) : null;
+
+        // --- SAAT KONTROLÜ BAŞLANGIÇ ---
+        if (user != null && gym != null && trainerDto.ShiftStart.HasValue && trainerDto.ShiftEnd.HasValue)
+        {
+            // 1. Mantık Hatası: Başlangıç saati, bitiş saatinden büyük olamaz
+            if (trainerDto.ShiftStart >= trainerDto.ShiftEnd)
+            {
+                throw new System.Exception("Mesai başlangıç saati, bitiş saatinden önce olmalıdır.");
+            }
+
+            // 2. Salon Saati Kontrolü
+            // Hocanın başladığı saat, salonun açılışından ÖNCE olamaz.
+            // Hocanın bittiği saat, salonun kapanışından SONRA olamaz.
+            if (trainerDto.ShiftStart < gym.OpenTime || trainerDto.ShiftEnd > gym.CloseTime)
+            {
+                throw new System.Exception($"Hata: Antrenörün çalışma saatleri ({trainerDto.ShiftStart}-{trainerDto.ShiftEnd}), salonun çalışma saatleri ({gym.OpenTime}-{gym.CloseTime}) sınırları içinde olmalıdır.");
+            }
+        }
+        // --- SAAT KONTROLÜ BİTİŞ ---
+
         if (user != null)
         {
-            // 1. Salon Ataması
+            // Kontrolleri geçtiyse veriyi güncelle
             user.GymId = trainerDto.GymId;
-            user.ShiftStart = trainerDto.ShiftStart; 
+            user.ShiftStart = trainerDto.ShiftStart;
             user.ShiftEnd = trainerDto.ShiftEnd;
+
             await _userManager.UpdateAsync(user);
 
-            // 2. Uzmanlık (Hizmet) Güncellemesi
-            // Önce eskileri temizle
+            // Hizmetleri güncelle
             var oldServices = _trainerServiceRepository.GetListByFilter(x => x.AppUserId == user.Id);
             foreach (var old in oldServices)
             {
                 _trainerServiceRepository.Delete(old);
             }
 
-            // --- HATA DÜZELTME BURADA ---
-            // Liste null ise (yani hiç hizmet yoksa) döngüye girme!
             if (trainerDto.ServiceList != null)
             {
                 foreach (var item in trainerDto.ServiceList)
