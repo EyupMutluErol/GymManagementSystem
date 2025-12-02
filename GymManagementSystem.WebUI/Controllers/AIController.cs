@@ -26,8 +26,6 @@ public class AIController : Controller
     {
         if (ModelState.IsValid)
         {
-            // YENİ VE SÜSLÜ PROMPT
-            // AI'ya HTML ve Bootstrap sınıflarını kullanmasını emrediyoruz.
             string prompt = $@"
                     Sen dünyanın en iyi spor ve beslenme koçusun. Aşağıdaki özelliklere sahip bir üye için kişiye özel program hazırla.
                     
@@ -63,7 +61,6 @@ public class AIController : Controller
 
             var aiResponse = await _aiService.GetGymWorkoutPlanAsync(prompt);
 
-            // Bazen AI markdown kodu (```html) eklerse temizliyoruz
             model.AIResponse = aiResponse.Replace("```html", "").Replace("```", "");
 
             return View("Index", model);

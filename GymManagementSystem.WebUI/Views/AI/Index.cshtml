@@ -14,7 +14,6 @@
     </div>
 
     <div class="row">
-        <!-- SOL TARAF: FORM -->
         <div class="col-md-4">
             <div class="card shadow border-0 mb-4">
                 <div class="card-header bg-dark text-white">
@@ -31,9 +30,11 @@
                             <div class="col">
                                 <label class="form-label">Cinsiyet</label>
                                 <select asp-for="Gender" class="form-select">
+                                    <option value="">Lütfen Seçiniz</option>
                                     <option>Erkek</option>
                                     <option>Kadın</option>
                                 </select>
+                                <span asp-validation-for="Gender" class="text-danger"></span>
                             </div>
                         </div>
 
@@ -51,7 +52,7 @@
                         <div class="mb-3">
                             <label class="form-label">Hedefiniz</label>
                             <select asp-for="Goal" class="form-select">
-                                <option value="">-- Lütfen Seçiniz --</option> 
+                                <option value=""> Lütfen Seçiniz </option> 
                                 <option>Kilo Vermek & Yağ Yakmak</option>
                                 <option>Kas Kütlesini Artırmak</option>
                                 <option>Formu Korumak & Sıkılaşmak</option>
@@ -63,7 +64,7 @@
                         <div class="mb-3">
                             <label class="form-label">Aktivite Düzeyi</label>
                             <select asp-for="ActivityLevel" class="form-select">
-                                <option value="">-- Lütfen Seçiniz --</option>
+                                <option value=""> Lütfen Seçiniz </option>
                                 <option>Hareketsiz (Masa başı iş)</option>
                                 <option>Az Hareketli (Haftada 1-2 spor)</option>
                                 <option>Orta Hareketli (Haftada 3-4 spor)</option>
@@ -82,7 +83,6 @@
             </div>
         </div>
 
-        <!-- SAĞ TARAF: SONUÇ ALANI -->
         <div class="col-md-8">
             <div class="card shadow border-0 h-100">
                 <div class="card-header bg-success text-white">
@@ -91,7 +91,6 @@
                 <div class="card-body bg-light" id="resultArea">
                     @if (!string.IsNullOrEmpty(Model.AIResponse))
                     {
-                        <!-- AI'dan gelen HTML cevabı buraya basılır -->
                         <div class="p-3 bg-white rounded shadow-sm border">
                             @Html.Raw(Model.AIResponse.Replace("```html", "").Replace("```", ""))
                         </div>
@@ -110,7 +109,6 @@
     </div>
 </div>
 
-<!-- Yükleniyor Animasyonu İçin Script -->
 <script>
     document.querySelector('form').addEventListener('submit', function() {
         var btn = document.getElementById('btnGenerate');

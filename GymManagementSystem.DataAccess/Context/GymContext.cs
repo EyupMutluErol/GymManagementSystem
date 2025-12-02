@@ -43,7 +43,7 @@ public class GymContext:IdentityDbContext<AppUser,IdentityRole<int>,int>
 
         builder.Entity<TrainerService>()
             .HasOne(ts => ts.AppUser)
-            .WithMany(u => u.TrainerServices) // AppUser'a eklediğimiz listeyi bağladık
+            .WithMany(u => u.TrainerServices) 
             .HasForeignKey(ts => ts.AppUserId)
             .OnDelete(DeleteBehavior.Cascade);
 
@@ -53,7 +53,7 @@ public class GymContext:IdentityDbContext<AppUser,IdentityRole<int>,int>
             .HasForeignKey(ts => ts.ServiceId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // 4. Randevu Güvenliği (Restrict - Veri Kaybını Önle)
+       
         builder.Entity<Appointment>()
             .HasOne(a => a.Member)
             .WithMany()

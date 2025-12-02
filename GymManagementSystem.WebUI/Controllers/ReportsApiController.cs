@@ -13,8 +13,8 @@ namespace GymManagementSystem.WebUI.Controllers
     {
         private readonly IAppUserService _appUserService;
         private readonly IAppointmentService _appointmentService;
-        private readonly IServiceService _serviceService; // Yeni Eklendi
-        private readonly IGymService _gymService;         // Yeni Eklendi
+        private readonly IServiceService _serviceService; 
+        private readonly IGymService _gymService;        
 
         public ReportsController(IAppUserService appUserService,
                                  IAppointmentService appointmentService,
@@ -40,7 +40,6 @@ namespace GymManagementSystem.WebUI.Controllers
                 AdSoyad = t.FirstName + " " + t.LastName,
                 Email = t.Email,
                 Mesai = $"{t.ShiftStart} - {t.ShiftEnd}",
-                // Burada kaç tane uzmanlığı olduğunu da saydırabiliriz (Eğer Include ile çekildiyse)
             });
 
             return Ok(result);
@@ -72,7 +71,6 @@ namespace GymManagementSystem.WebUI.Controllers
         [HttpGet("trainer/{trainerId}/schedule")]
         public IActionResult GetTrainerSchedule(int trainerId)
         {
-            // Detaylı randevu listesini çekiyoruz (Service, Member dolu gelsin diye)
             var allAppointments = _appointmentService.GetAllAppointmentsWithDetails();
 
             // LINQ Filtreleme: Sadece bu hoca + Gelecek Tarih + Onaylanmış

@@ -17,7 +17,7 @@ public class AIRequestViewModel
     public double? Height { get; set; }
 
     [Display(Name = "Cinsiyet")]
-    public string Gender { get; set; } // "Erkek", "Kadın"
+    public string? Gender { get; set; } // "Erkek", "Kadın"
 
     [Display(Name = "Hedefiniz")]
     public string? Goal { get; set; } // "Kilo Vermek", "Kas Yapmak", "Form Korumak"

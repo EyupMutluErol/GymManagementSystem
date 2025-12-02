@@ -19,7 +19,7 @@
                         <div class="mb-3">
                             <label asp-for="GymId" class="form-label fw-bold">Bağlı Olduğu Salon</label>
                             <select asp-for="GymId" class="form-select" asp-items="ViewBag.Gyms">
-                                <option value="">-- Salon Seçiniz --</option>
+                                <option value=""> Salon Seçiniz </option>
                             </select>
                             <span asp-validation-for="GymId" class="text-danger"></span>
                         </div>

@@ -47,7 +47,7 @@ namespace GymManagementSystem.WebUI.Controllers
             return View(model);
         }
 
-        // --- KULLANICI YÖNETİMİ ---
+        // KULLANICI YÖNETİMİ
         public async Task<IActionResult> UserList()
         {
             var allUsers = await _appUserService.GetUserListWithRolesAsync();
@@ -152,29 +152,14 @@ namespace GymManagementSystem.WebUI.Controllers
             var gyms = _gymService.GetList();
             ViewBag.Gyms = new SelectList(gyms, "Id", "Name", dto.GymId);
 
-            // DTO'yu View'a gönder (View direkt DTO kullanabilir veya ViewModel'e çevirebilirsin)
-            // Hızlı çözüm için DTO'yu View'da kullanacağız.
             return View(dto);
         }
 
-        [HttpGet]
-        public IActionResult GetServicesByGym(int gymId)
-        {
-            // Salona ait hizmetleri çek
-            var services = _serviceService.GetListByFilter(x => x.GymId == gymId);
-
-            // Sadece ID ve İsimlerini JSON olarak döndür
-            // (Tüm veriyi göndermeye gerek yok, hafif olsun)
-            var jsonResult = services.Select(s => new { s.Id, s.Name }).ToList();
-
-            return Json(jsonResult);
-        }
+        
 
         [HttpPost]
         public async Task<IActionResult> EditTrainer(TrainerDetailDto model, int[] selectedServices)
         {
-            // Kullanıcıdan gelen ID'leri modele geçici olarak atayalım
-            // (Bu kısım servise gitmek içindir)
             model.ServiceList = new List<ServiceCheckBoxDto>();
             if (selectedServices != null)
             {
@@ -186,17 +171,14 @@ namespace GymManagementSystem.WebUI.Controllers
 
             try
             {
-                // Güncellemeyi dene
                 await _appUserService.UpdateTrainerDetailsAsync(model);
                 return RedirectToAction("TrainerList");
             }
             catch (System.Exception ex)
             {
-                // Hata varsa yakala
                 ModelState.AddModelError("", ex.Message);
             }
 
-            // --- HATA VARSA SAYFAYI TAMİR ET (BURASI EKLENDİ) ---
 
             // 1. Salon Dropdown'ını doldur
             var gyms = _gymService.GetList();
@@ -217,7 +199,6 @@ namespace GymManagementSystem.WebUI.Controllers
                     {
                         ServiceId = service.Id,
                         ServiceName = service.Name, // İsim bilgisini burası getirir
-                        // Kullanıcı az önce bunu işaretlemiş miydi? Kontrol et.
                         IsSelected = selectedServices != null && selectedServices.Contains(service.Id)
                     });
                 }
@@ -226,11 +207,12 @@ namespace GymManagementSystem.WebUI.Controllers
             return View(model);
         }
 
+
         // SALON YÖNETİMİ
         [HttpGet]
         public IActionResult GymList()
         {
-            // 1. Servisten tüm salonları çek (Generic metot yeterli)
+            // 1. Servisten tüm salonları çek 
             var gyms = _gymService.GetList();
 
             // 2. Entity listesini ViewModel listesine çevir
@@ -347,7 +329,6 @@ namespace GymManagementSystem.WebUI.Controllers
             }
             catch (Exception)
             {
-                // Veritabanı hatası (Constraint Error) oluşursa buraya düşer
                 TempData["ErrorMessage"] = "Bu salon silinemez! Çünkü içinde kayıtlı antrenörler veya hizmetler var. Önce onları silmeli veya başka salona taşımalısınız.";
             }
 
@@ -428,7 +409,7 @@ namespace GymManagementSystem.WebUI.Controllers
                 GymId = service.GymId
             };
 
-            // Dropdown için salonları getir ve mevcut salonu SEÇİLİ yap
+            // Dropdown için salonları getir ve mevcut salonu seçili yap
             var gyms = _gymService.GetList();
             ViewBag.Gyms = new SelectList(gyms, "Id", "Name", service.GymId);
 
@@ -481,6 +462,10 @@ namespace GymManagementSystem.WebUI.Controllers
 
             return RedirectToAction("ServiceList");
         }
+
+
+
+        // RANDEVU YÖNETİMİ
 
         [HttpGet]
         public IActionResult AppointmentList()
@@ -540,11 +525,18 @@ namespace GymManagementSystem.WebUI.Controllers
         // EKSTRA METHODLAR
         public async Task<IActionResult> ChangeRole(int id, string role)
         {
-            // Servise "Bu ID'li kullanıcının rolünü şununla değiştir" diyoruz
             await _appUserService.ChangeUserRoleAsync(id, role);
-
-            // İşlem bitince listeye geri dönüyoruz (Sayfa yenilenmiş oluyor)
             return RedirectToAction("UserList");
+        }
+
+        [HttpGet]
+        public IActionResult GetServicesByGym(int gymId)
+        {
+            // Salona ait hizmetleri çek
+            var services = _serviceService.GetListByFilter(x => x.GymId == gymId);
+            var jsonResult = services.Select(s => new { s.Id, s.Name }).ToList();
+
+            return Json(jsonResult);
         }
     }
 }

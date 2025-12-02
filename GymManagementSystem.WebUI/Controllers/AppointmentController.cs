@@ -85,7 +85,6 @@ public class AppointmentController : Controller
             {
                 ServiceId = model.ServiceId,
                 TrainerId = model.TrainerId,
-                // Üye ID'sini giriş yapmış kullanıcıdan alıyoruz
                 MemberId = int.Parse(_userManager.GetUserId(User)),
                 Date = model.Date,
                 StartTime = startTime,
@@ -94,7 +93,7 @@ public class AppointmentController : Controller
             };
 
             _appointmentService.Insert(appointment);
-            return RedirectToAction("Index", "Home"); // Veya "Randevularım" sayfası
+            return RedirectToAction("Index", "Home"); 
         }
 
         // Hata varsa sayfayı tekrar doldur

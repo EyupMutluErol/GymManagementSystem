@@ -17,11 +17,8 @@ public class AppUser:IdentityUser<int>,IEntity
     public string LastName { get; set; }
 
     [Display(Name = "Profil Fotoğrafı")]
-    public string? PhotoUrl { get; set; } // Veritabanında sadece yolunu tutuyoruz (Örn: "resim.jpg")
+    public string? PhotoUrl { get; set; } 
 
-
-    // --- TRAINER ÖZEL ALANLARI (VERİTABANINDA NULL OLABİLİR) ---
-    // Not: Admin panelinde rol ataması yaparken kod tarafında bu alanların doluluğunu kontrol edeceğiz.
 
     public int? GymId { get; set; }
     public Gym? Gym { get; set; }
@@ -35,10 +32,10 @@ public class AppUser:IdentityUser<int>,IEntity
     public TimeSpan? ShiftEnd { get; set; }
 
 
-    // --- MEMBER (AI) ÖZEL ALANLARI (VERİTABANINDA NULL OLABİLİR) ---
+    
 
     [Display(Name = "Doğum Tarihi")]
-    [DataType(DataType.Date)] // Sadece Tarih kısmını (dd.MM.yyyy) tutar, saati önemsemez.
+    [DataType(DataType.Date)] 
     public DateTime? BirthDate { get; set; }
 
     [Display(Name = "Cinsiyet")]

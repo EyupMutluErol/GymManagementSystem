@@ -65,7 +65,7 @@ namespace GymManagementSystem.Business.Concrete
                 }
                 else
                 {
-                    // HATA DETAYI BURADA: Google'ın verdiği hata mesajını olduğu gibi ekrana basıyoruz
+                    
                     return $"GOOGLE HATA VERDİ ({response.StatusCode}): {responseString}";
                 }
             }

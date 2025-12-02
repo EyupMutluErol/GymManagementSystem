@@ -13,8 +13,7 @@
         <div class="card-body">
             <form asp-action="EditTrainer" method="post">
 
-                <!-- HATA MESAJI KUTUSU (BURASI DÜZELTİLDİ) -->
-                <!-- asp-validation-summary="All" diyerek hem model hem property hatalarını gösteriyoruz -->
+
                 @if (!ViewData.ModelState.IsValid)
                 {
                     <div class="alert alert-danger" role="alert">
@@ -28,7 +27,6 @@
                 <input type="hidden" asp-for="LastName" />
                 <input type="hidden" asp-for="Email" />
 
-                <!-- 1. SALON SEÇİMİ -->
                 <div class="mb-4">
                     <label class="form-label fw-bold">Çalıştığı Salon</label>
                     <select asp-for="GymId" class="form-select" asp-items="ViewBag.Gyms" id="gymDropdown">
@@ -37,7 +35,6 @@
                     <div class="form-text text-muted">Hocanın verebileceği dersleri görmek için bir salon seçiniz.</div>
                 </div>
 
-                <!-- 2. MESAİ SAATLERİ (YENİ EKLENMİŞTİ) -->
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <label class="form-label fw-bold">Mesai Başlangıç</label>
@@ -49,7 +46,6 @@
                     </div>
                 </div>
 
-                <!-- 3. HİZMET (UZMANLIK) SEÇİMİ -->
                 <h5 class="border-bottom pb-2 mb-3">Verebileceği Hizmetler</h5>
 
                 <div class="row" id="servicesContainer">

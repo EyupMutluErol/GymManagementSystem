@@ -160,8 +160,8 @@ public class AppUserManager:GenericManager<AppUser>,IAppUserService
             }
 
             // 2. Salon Saati Kontrolü
-            // Hocanın başladığı saat, salonun açılışından ÖNCE olamaz.
-            // Hocanın bittiği saat, salonun kapanışından SONRA olamaz.
+            // Hocanın başladığı saat, salonun açılışından önce olamaz.
+            // Hocanın bittiği saat, salonun kapanışından sonra olamaz.
             if (trainerDto.ShiftStart < gym.OpenTime || trainerDto.ShiftEnd > gym.CloseTime)
             {
                 throw new System.Exception($"Hata: Antrenörün çalışma saatleri ({trainerDto.ShiftStart}-{trainerDto.ShiftEnd}), salonun çalışma saatleri ({gym.OpenTime}-{gym.CloseTime}) sınırları içinde olmalıdır.");

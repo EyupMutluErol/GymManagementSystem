@@ -24,7 +24,7 @@ public class TrainerController : Controller
         // Giriş yapan eğitmeni bul
         var trainer = await _userManager.GetUserAsync(User);
 
-        // Eğitmene ait randevuları çek (Bunun için servise yeni bir metot ekleyeceğiz)
+        // Eğitmene ait randevuları çek 
         var appointments = _appointmentService.GetAppointmentsByTrainer(trainer.Id);
 
         var modelList = new List<AppointmentListViewModel>();
@@ -41,7 +41,6 @@ public class TrainerController : Controller
             modelList.Add(new AppointmentListViewModel
             {
                 Id = item.Id,
-                // Öğrenci adını göster
                 TrainerName = item.Member.FirstName + " " + item.Member.LastName,
                 ServiceName = item.Service.Name,
                 Date = item.Date,

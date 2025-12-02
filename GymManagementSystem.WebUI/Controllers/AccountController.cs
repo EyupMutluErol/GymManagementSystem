@@ -20,7 +20,6 @@ namespace GymManagementSystem.WebUI.Controllers
 
         public async Task<IActionResult> CreateRoles()
         {
-            // RoleManager'a ihtiyacımız var, Constructor'a eklemeliyiz ama şimdilik hızlı çözüm:
             var roleManager = HttpContext.RequestServices.GetService<RoleManager<IdentityRole<int>>>();
 
             string[] roleNames = { "Admin", "Trainer", "Member" };
@@ -61,8 +60,6 @@ namespace GymManagementSystem.WebUI.Controllers
 
                 if (result.Succeeded)
                 {
-                    // Şimdilik varsayılan olarak "Member" rolü atayalım (İleride RoleManager ile yapacağız)
-                    // await _userManager.AddToRoleAsync(user, "Member");
                     await _userManager.AddToRoleAsync(user, "Member");
                     return RedirectToAction("Login");
                 }
@@ -114,7 +111,7 @@ namespace GymManagementSystem.WebUI.Controllers
                     }
                     else if (await _userManager.IsInRoleAsync(user, "Trainer"))
                     {
-                        return RedirectToAction("Index", "Trainer"); 
+                        return RedirectToAction("Index", "Trainer"); // Trainer Paneline
                     }
                     else
                     {

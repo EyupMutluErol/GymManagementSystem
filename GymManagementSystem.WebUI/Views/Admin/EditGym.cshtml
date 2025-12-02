@@ -1,5 +1,4 @@
-﻿<!-- Views/Admin/EditGym.cshtml -->
-@model GymManagementSystem.WebUI.Models.ViewModels.GymViewModel
+﻿@model GymManagementSystem.WebUI.Models.ViewModels.GymViewModel
 
 @{
     ViewData["Title"] = "Salon Düzenle";
@@ -15,7 +14,6 @@
                 </div>
                 <div class="card-body">
                     <form asp-action="EditGym" method="post">
-                        <!-- ID'yi gizli olarak taşıyoruz -->
                         <input type="hidden" asp-for="Id" />
 
                         <div class="mb-3">

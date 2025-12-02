@@ -1,14 +1,12 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using GymManagementSystem.Entities.Concrete
 
-<!-- Kullanıcı bilgilerini çekmek için UserManager'ı sayfaya dahil ediyoruz -->
 @inject UserManager<AppUser> UserManager
 
 @{
     ViewData["Title"] = "Ana Sayfa";
 }
 
-<!-- 1. HERO BÖLÜMÜ -->
 <div class="p-5 mb-4 bg-dark rounded-3 hero-section d-flex align-items-center">
     <div class="container-fluid py-5 text-white">
         <h1 class="display-3 fw-bold animate-up">Sınırlarını Zorla, <br><span class="text-primary">Potansiyelini Keşfet</span></h1>
@@ -19,15 +17,12 @@
         <div class="mt-4 animate-up delay-2">
             @if (User.Identity.IsAuthenticated)
             {
-                // Kullanıcı Adını Çekme
                 var user = await UserManager.GetUserAsync(User);
                 var displayName = user != null ? user.FirstName : User.Identity.Name;
 
                 <h4 class="mb-3"><i class="fa-solid fa-user-check text-success"></i> Hoşgeldin, @displayName!</h4>
 
-                // --- ROL KONTROLÜ BAŞLIYOR ---
 
-                // 1. Durum: Normal Üye (Member)
                 if (User.IsInRole("Member"))
                 {
                     <a class="btn btn-primary btn-lg me-2" href="/Appointment/Create" role="button">
@@ -37,25 +32,21 @@
                         <i class="fa-solid fa-list-check"></i> Randevularım
                     </a>
                 }
-                // 2. Durum: Admin
                 else if (User.IsInRole("Admin"))
                 {
                     <a class="btn btn-warning btn-lg me-2 text-dark" href="/Admin/Index" role="button">
                         <i class="fa-solid fa-gauge-high"></i> Yönetim Paneline Git
                     </a>
                 }
-                // 3. Durum: Eğitmen (Trainer)
                 else if (User.IsInRole("Trainer"))
                 {
                     <a class="btn btn-info btn-lg me-2 text-white" href="/Trainer/Index" role="button">
                         <i class="fa-solid fa-chalkboard-user"></i> Eğitmen Paneline Git
                     </a>
                 }
-                // -----------------------------
             }
             else
             {
-                // Giriş Yapmamış Kullanıcı
                 <a class="btn btn-primary btn-lg me-2" href="/Account/Register" role="button">
                     <i class="fa-solid fa-rocket"></i> Aramıza Katıl
                 </a>
@@ -67,7 +58,6 @@
     </div>
 </div>
 
-<!-- 2. ÖZELLİKLER (Kartlar) -->
 <div class="container marketing mt-5">
     <div class="row text-center">
         
@@ -104,7 +94,6 @@
     </div>
 </div>
 
-<!-- 3. AI TANITIM BANDI -->
 @if (!User.Identity.IsAuthenticated || User.IsInRole("Member"))
 {
     <div class="bg-dark text-white py-5 mt-5 rounded-3 position-relative overflow-hidden">
@@ -118,14 +107,12 @@
 
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <!-- Giriş yapmış üye için: Direkt AI sayfasına git -->
                         <a asp-controller="AI" asp-action="Index" class="btn btn-warning btn-lg fw-bold text-dark px-4">
                             <i class="fa-solid fa-wand-magic-sparkles"></i> Hemen Başla
                         </a>
                     }
                     else
                     {
-                        <!-- Misafir için: Önce giriş yapmaya gönder -->
                         <a asp-controller="Account" asp-action="Login" class="btn btn-warning btn-lg fw-bold text-dark px-4">
                             <i class="fa-solid fa-right-to-bracket"></i> Giriş Yap & Dene
                         </a>
@@ -138,7 +125,6 @@
     </div>
 }
 
-<!-- CSS STİLLERİ -->
 <style>
     .hero-section {
         background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), 
