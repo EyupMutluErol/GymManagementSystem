@@ -118,12 +118,113 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted mt-auto py-3 bg-light">
-        <div class="container text-center">
-            &copy; 2025 - Gym Yönetim Sistemi - <a asp-area="" asp-controller="Home" asp-action="Privacy">Gizlilik</a>
+    <footer class="bg-dark text-white pt-5 pb-3 mt-auto border-top border-secondary">
+        <div class="container">
+            <div class="row">
+
+                <!-- 1. SÜTUN: Marka ve Kısa Bilgi -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h5 class="text-warning fw-bold mb-3">
+                        <i class="fa-solid fa-dumbbell me-2"></i>GymApp
+                    </h5>
+                    <p class="small text-white-50" style="line-height: 1.6;">
+                        Teknolojiyi sporla buluşturan yenilikçi yönetim platformu.
+                        Yapay zeka destekli analizler ve kolay randevu sistemiyle hedeflerinize ulaşmanız artık çok daha kolay.
+                    </p>
+                </div>
+
+                <!-- 2. SÜTUN: Hızlı Erişim Linkleri -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h6 class="text-uppercase fw-bold mb-3 text-primary">Hızlı Erişim</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a asp-controller="Home" asp-action="Index" class="text-white-50 text-decoration-none footer-link">
+                                <i class="fa-solid fa-angle-right me-2 small text-warning"></i>Ana Sayfa
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a asp-controller="Home" asp-action="Privacy" class="text-white-50 text-decoration-none footer-link">
+                                <i class="fa-solid fa-angle-right me-2 small text-warning"></i>Hakkımızda
+                            </a>
+                        </li>
+
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <li class="mb-2">
+                                <a asp-controller="Account" asp-action="Login" class="text-white-50 text-decoration-none footer-link">
+                                    <i class="fa-solid fa-angle-right me-2 small text-warning"></i>Giriş Yap
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a asp-controller="Account" asp-action="Register" class="text-white-50 text-decoration-none footer-link">
+                                    <i class="fa-solid fa-angle-right me-2 small text-warning"></i>Kayıt Ol
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+                <!-- 3. SÜTUN: İletişim ve Sosyal Medya -->
+                <div class="col-lg-4 col-md-12 mb-4">
+                    <h6 class="text-uppercase fw-bold mb-3 text-primary">İletişim & Takip</h6>
+                    <ul class="list-unstyled small text-white-50 mb-4">
+                        <li class="mb-2"><i class="fa-solid fa-location-dot me-2 text-warning"></i> Sakarya Üniversitesi Bilgisayar Ve Bilişim Bilimleri Fakültesi</li>
+                        <li class="mb-2"><i class="fa-solid fa-envelope me-2 text-warning"></i> eyupmutluerol@gmail.com</li>
+                        <li class="mb-2"><i class="fa-solid fa-phone me-2 text-warning"></i> +90 (546) 760 43 76</li>
+                    </ul>
+
+                    <!-- Sosyal Medya İkonları -->
+                    <div class="d-flex gap-3">
+                        <a href="#" class="social-btn btn btn-outline-light btn-sm rounded-circle"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/eyup.erll/" target="_blank" class="social-btn btn btn-outline-light btn-sm rounded-circle"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="social-btn btn btn-outline-light btn-sm rounded-circle"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="https://www.linkedin.com/in/eyüpmutluerol/" target="_blank" class="social-btn btn btn-outline-light btn-sm rounded-circle"><i class="fa-brands fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-secondary my-4" />
+
+            <!-- Alt Telif ve İmza Kısmı -->
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start small text-white-50">
+                    &copy; @DateTime.Now.Year - <strong>Gym Yönetim Sistemi</strong> | Tüm Hakları Saklıdır.
+                </div>
+                <div class="col-md-6 text-center text-md-end small text-white-50 mt-2 mt-md-0">
+                    Designed by <span class="text-warning">Eyüp Mutlu Erol</span>
+                </div>
+            </div>
         </div>
     </footer>
 
+    <style>
+        .footer-link {
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+            .footer-link:hover {
+                color: #ffc107 !important; 
+                padding-left: 8px; 
+            }
+
+        
+        .social-btn {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+            .social-btn:hover {
+                background-color: #ffc107;
+                border-color: #ffc107;
+                color: #000;
+                transform: translateY(-3px); 
+            }
+    </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
