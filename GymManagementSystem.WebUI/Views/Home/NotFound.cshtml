@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Sayfa Bulunamadı";
+    Layout = "_Layout";
+}
+
+<div class="container text-center py-5">
+    <div class="display-1 fw-bold text-muted">404</div>
+    <h2 class="mb-4">Aradığınız Sayfa Bulunamadı</h2>
+    <p class="lead text-muted mb-5">
+        Ulaşmaya çalıştığınız sayfa kaldırılmış, adı değiştirilmiş veya geçici olarak kullanım dışı olabilir.
+    </p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">
+        <i class="fa-solid fa-house"></i> Ana Sayfaya Dön
+    </a>
+</div>
