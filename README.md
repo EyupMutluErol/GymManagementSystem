@@ -1,12 +1,35 @@
-# Proje: Spor Salonu Yönetim ve Randevu Sistemi
+# Gym Yönetim ve Randevu Sistemi
 
-**Ders:** WEB PROGRAMLAMA DERSÝ PROJE ÖDEVÝ (2025-2026 GÜZ DÖNEMÝ)
+Bu proje, Sakarya Üniversitesi Web Programlama dersi için geliþtirilmiþ, yapay zeka destekli bir spor salonu yönetim sistemidir.
 
-Bu proje, ASP.NET Core MVC kullanýlarak geliþtirilen bir spor salonu (Fitness Center) yönetim sistemidir. Sistemin amacý, üyelerin randevu almasýný, antrenörlerin yönetimini ve yapay zeka tabanlý egzersiz önerilerini yönetmektir.
+## Teknolojiler ve Araçlar
 
-**Kullanýlan Teknolojiler:**
-* ASP.NET Core MVC
-* Entity Framework Core
-* SQL Server / PostgreSQL
-* Bootstrap 5
-* HTML5, CSS3, JavaScript, jQuery
+* **Framework:** .NET 9.0
+* **Veritabaný:** MS SQL Server
+* **ORM:** Entity Framework Core (Code First Yaklaþýmý)
+* **Kimlik Doðrulama:** ASP.NET Core Identity
+* **Nesne Eþleme:** AutoMapper
+* **Doðrulama:** FluentValidation
+* **Frontend:** ASP.NET Core MVC, Bootstrap 5, HTML5/CSS3
+* **Versiyon Kontrol:** Git
+
+## Özellikler
+
+* **Yönetim Paneli:** Salon, Hizmet ve Eðitmen yönetimi.
+* **Randevu Sistemi:** Müsaitlik kontrolü ile çakýþmasýz randevu alma.
+* **AI Antrenör:** Google Gemini API ile kiþiye özel program hazýrlama.
+* **Raporlama:** REST API üzerinden yönetici raporlarý.
+* **Rol Yönetimi:** Admin, Trainer ve Member yetkilendirmeleri.
+
+## Proje Klasör Yapýsý
+
+* GymManagementSystem.Business
+* GymManagementSystem.DataAccess
+* GymManagementSystem.Entities
+* GymManagementSystem.WebUI
+
+##  Lisans ve Telif Hakký
+
+**© 2025 [Eyüp Mutlu Erol] - Tüm Haklarý Saklýdýr.**
+
+Bu proje, Sakarya Üniversitesi Web Programlama dersi kapsamýnda þahsi olarak geliþtirilmiþtir. Projenin kaynak kodlarýnýn, tasarýmýnýn veya içeriðinin sahibinin yazýlý izni olmaksýzýn kopyalanmasý, çoðaltýlmasý veya ticari amaçla kullanýlmasý yasaktýr.
