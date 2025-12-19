@@ -22,6 +22,11 @@ public class AppointmentManager:GenericManager<Appointment>,IAppointmentService
     {
         var slots = new List<string>();
 
+        if (date.Date < DateTime.Now.Date)
+        {
+            return slots;
+        }
+
         var trainer = _appUserRepository.GetById(trainerId);
         var service = _serviceRepository.GetById(serviceId);
 
@@ -39,6 +44,17 @@ public class AppointmentManager:GenericManager<Appointment>,IAppointmentService
         {
             TimeSpan slotEnd = currentSlot.Add(TimeSpan.FromMinutes(duration));
             bool isAvailable = true;
+
+            if (date.Date == DateTime.Now.Date)
+            {
+                // Eğer slotun başlama saati, şu anki saatten küçükse (geçmişse)
+                // Bu saati listeye eklemeden bir sonraki tura geçiyoruz.
+                if (currentSlot < DateTime.Now.TimeOfDay)
+                {
+                    currentSlot = currentSlot.Add(TimeSpan.FromMinutes(duration));
+                    continue;
+                }
+            }
 
             foreach (var app in existingAppointments)
             {

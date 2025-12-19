@@ -505,8 +505,21 @@ namespace GymManagementSystem.WebUI.Controllers
             var appointment = _appointmentService.GetById(id);
             if (appointment != null)
             {
-                appointment.Status = AppointmentStatus.Confirmed;
-                _appointmentService.Update(appointment);
+                DateTime appointmentDateTime = appointment.Date.Date + appointment.StartTime;
+
+                // Kontrol : Şu anki zamandan önce mi?
+                if (appointmentDateTime < DateTime.Now)
+                {
+                    appointment.Status = AppointmentStatus.Cancelled;
+                    _appointmentService.Update(appointment);
+                    TempData["ErrorMessage"] = "UYARI: Bu randevunun tarihi geçmiş! Onaylanamaz. Sistem tarafından otomatik olarak 'Reddedildi/İptal' durumuna çekildi.";
+                }
+                else
+                {
+                    appointment.Status = AppointmentStatus.Confirmed;
+                    _appointmentService.Update(appointment);
+                    TempData["SuccessMessage"] = "Randevu başarıyla onaylandı.";
+                }
             }
             return RedirectToAction("AppointmentList");
         }
